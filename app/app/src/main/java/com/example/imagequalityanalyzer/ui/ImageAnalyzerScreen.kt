@@ -37,7 +37,9 @@ fun ImageAnalyzerScreen() {
     val picker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        selectedUri = uri
+        if (uri != null) {
+            selectedUri = uri
+        }
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
