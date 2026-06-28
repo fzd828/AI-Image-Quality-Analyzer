@@ -8,14 +8,14 @@ These packages are the canonical execution units for future conversations.
   - Android Kotlin + Jetpack Compose project exists under `app/`.
   - Debug build has been verified with `:app:assembleDebug`.
   - Real-device run remains pending until Redmi K70E is connected.
-- [ ] **WS1 - Picker Preview Flow（图片选择与预览流程）**
+- [x] **WS1 - Picker Preview Flow（图片选择与预览流程）**
   - Depends on WS0.
   - Implements local image selection and preview only.
-  - Current status: draft code exists, review/build acceptance pending.
+  - Current status: reviewer approved; committed separately from WS3.
 - [ ] **WS2 - Decode Metadata And Large Image Safety（图片解码、元数据与大图安全）**
   - Depends on WS1.
   - Adds image metadata, format detection, and safe downsampled analysis bitmap.
-- [ ] **WS3 - Quality Metrics Engine（画质指标计算引擎）**
+- [x] **WS3 - Quality Metrics Engine（画质指标计算引擎）**
   - Depends on WS0.
   - Can run in parallel with WS2 if it only writes `analysis/` code and tests.
 - [ ] **WS4 - Scoring And Result UI（评分规则与结果展示界面）**
