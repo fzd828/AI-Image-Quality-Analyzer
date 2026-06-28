@@ -39,8 +39,8 @@ Read these first before doing task work:
 - Android project skeleton exists under `app/`.
 - `:app:assembleDebug` has been verified successfully with escalated filesystem access.
 - Task 1 was reviewed and approved.
-- Task 2 image picker/preview has draft code in:
+- Task 2 / WS1 image picker-preview flow was independently submitted and accepted:
   - `app/app/src/main/java/com/example/imagequalityanalyzer/MainActivity.kt`
   - `app/app/src/main/java/com/example/imagequalityanalyzer/ui/ImageAnalyzerScreen.kt`
-- Task 2 has not been reviewed or accepted yet.
-
+- WS1 commit: `cad805e feat: add image picker preview flow`.
+- OpenSpec task list marks WS1 complete.

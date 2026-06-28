@@ -6,7 +6,13 @@ Let the user select a local image and preview it in the Android app.
 
 ## Current Status
 
-Draft code exists but is not yet reviewed or accepted.
+WS1 was independently submitted and accepted in another conversation.
+
+Commit:
+
+- `cad805e feat: add image picker preview flow`
+
+OpenSpec `tasks.md` now marks WS1 complete.
 
 Files already touched:
 
