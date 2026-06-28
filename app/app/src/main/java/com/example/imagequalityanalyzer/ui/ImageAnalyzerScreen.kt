@@ -23,10 +23,14 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.imagequalityanalyzer.analysis.ImageQualityAnalyzer
+import com.example.imagequalityanalyzer.analysis.ImageQualityScorer
+import com.example.imagequalityanalyzer.analysis.QualityResult
 import com.example.imagequalityanalyzer.image.ImageLoader
 import com.example.imagequalityanalyzer.image.LoadedImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.system.measureTimeMillis
 
 @Composable
 fun ImageAnalyzerScreen() {
@@ -86,13 +90,69 @@ private fun LoadedImagePreview(image: LoadedImage) {
             Text("File size: ${formatFileSize(size)}")
         }
         Text("Downsampled for analysis: ${if (image.downsampled) "Yes" else "No"}")
+        Spacer(modifier = Modifier.height(16.dp))
+        AnalysisResult(image)
     }
+}
+
+@Composable
+private fun AnalysisResult(image: LoadedImage) {
+    val analysisState by produceState<AnalysisState>(
+        initialValue = AnalysisState.Analyzing,
+        image
+    ) {
+        value = withContext(Dispatchers.Default) {
+            analyzeImage(image)
+        }
+    }
+
+    when (val state = analysisState) {
+        AnalysisState.Analyzing -> Text("Analyzing image...")
+        is AnalysisState.Analyzed -> {
+            Text("Overall score: ${state.result.overallScore}/100")
+            Text("Analysis time: ${state.elapsedMillis} ms")
+            Text("Diagnosis: ${state.result.explanation}")
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Sharpness: ${state.result.sharpnessScore}/100")
+            Text("Exposure: ${state.result.exposureScore}/100")
+            Text("Contrast: ${state.result.contrastScore}/100")
+            Text("Color cast: ${state.result.colorCastScore}/100")
+        }
+    }
+}
+
+private fun analyzeImage(image: LoadedImage): AnalysisState.Analyzed {
+    val bitmap = image.analysisBitmap
+    val pixels = IntArray(bitmap.width * bitmap.height)
+    var result: QualityResult? = null
+    val elapsedMillis = measureTimeMillis {
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+        val metrics = ImageQualityAnalyzer.analyze(
+            width = bitmap.width,
+            height = bitmap.height,
+            argbPixels = pixels
+        )
+        result = ImageQualityScorer.score(metrics)
+    }
+
+    return AnalysisState.Analyzed(
+        result = checkNotNull(result),
+        elapsedMillis = elapsedMillis
+    )
 }
 
 private sealed interface ImageLoadState {
     data object Loading : ImageLoadState
     data object Error : ImageLoadState
     data class Loaded(val image: LoadedImage) : ImageLoadState
+}
+
+private sealed interface AnalysisState {
+    data object Analyzing : AnalysisState
+    data class Analyzed(
+        val result: QualityResult,
+        val elapsedMillis: Long
+    ) : AnalysisState
 }
 
 private fun formatFileSize(bytes: Long): String =

@@ -19,7 +19,7 @@ These packages are the canonical execution units for future conversations.
 - [x] **WS3 - Quality Metrics Engine（画质指标计算引擎）**
   - Depends on WS0.
   - Can run in parallel with WS2 if it only writes `analysis/` code and tests.
-- [ ] **WS4 - Scoring And Result UI（评分规则与结果展示界面）**
+- [x] **WS4 - Scoring And Result UI（评分规则与结果展示界面）**
   - Depends on WS2 and WS3.
   - Adds 0-100 sub-scores, overall score, explanation, and analysis time display.
 - [ ] **WS5 - Redmi K70E Sample Set（红米 K70E 样本图片集）**
@@ -57,13 +57,13 @@ Detailed package briefs live under `docs/superpowers/task-packets/`.
 ## Phase 2 - Quality Metrics
 
 - [ ] Implement grayscale conversion.
-- [ ] Implement sharpness score.
-- [ ] Implement exposure score.
-- [ ] Implement contrast score.
-- [ ] Implement color cast score as the fourth quality dimension.
-- [ ] Implement weighted overall score.
-- [ ] Generate readable result explanation.
-- [ ] Record analysis time for each image.
+- [x] Implement sharpness score.
+- [x] Implement exposure score.
+- [x] Implement contrast score.
+- [x] Implement color cast score as the fourth quality dimension.
+- [x] Implement weighted overall score.
+- [x] Generate readable result explanation.
+- [x] Record analysis time for each image.
 
 ## Phase 3 - Validation Evidence
 
