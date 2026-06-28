@@ -57,7 +57,10 @@ object ImageQualityAnalyzer {
             return 0.0
         }
 
-        val responses = ArrayList<Double>((width - 2) * (height - 2))
+        var count = 0
+        var mean = 0.0
+        var sumSquaredDeltas = 0.0
+
         for (y in 1 until height - 1) {
             for (x in 1 until width - 1) {
                 val center = y * width + x
@@ -66,15 +69,15 @@ object ImageQualityAnalyzer {
                     luminance[center + 1] +
                     luminance[center + width] -
                     4.0 * luminance[center]
-                responses.add(response)
+
+                count += 1
+                val delta = response - mean
+                mean += delta / count
+                sumSquaredDeltas += delta * (response - mean)
             }
         }
 
-        val mean = responses.sum() / responses.size
-        return responses.sumOf { response ->
-            val delta = response - mean
-            delta * delta
-        } / responses.size
+        return sumSquaredDeltas / count
     }
 
     private fun standardDeviation(values: DoubleArray, mean: Double): Double =
