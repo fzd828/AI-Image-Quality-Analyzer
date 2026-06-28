@@ -9,3 +9,8 @@ build/
 tmp/
 .agents/
 .codex/
+.superpowers/
+
+app/.idea/
+app/settings.gradle.kts.bak
+app/gradle/gradle-daemon-jvm.properties
