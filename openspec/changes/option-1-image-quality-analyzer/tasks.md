@@ -12,9 +12,10 @@ These packages are the canonical execution units for future conversations.
   - Depends on WS0.
   - Implements local image selection and preview only.
   - Current status: reviewer approved; committed separately from WS3.
-- [ ] **WS2 - Decode Metadata And Large Image Safety（图片解码、元数据与大图安全）**
+- [x] **WS2 - Decode Metadata And Large Image Safety（图片解码、元数据与大图安全）**
   - Depends on WS1.
   - Adds image metadata, format detection, and safe downsampled analysis bitmap.
+  - Current status: implemented in `ImageLoader`, wired into preview UI, and verified with unit tests plus debug build.
 - [x] **WS3 - Quality Metrics Engine（画质指标计算引擎）**
   - Depends on WS0.
   - Can run in parallel with WS2 if it only writes `analysis/` code and tests.
@@ -48,10 +49,10 @@ Detailed package briefs live under `docs/superpowers/task-packets/`.
 - [ ] Create Android project.
 - [ ] Implement image picker.
 - [ ] Preview selected image.
-- [ ] Show image metadata: format, dimensions, file size.
-- [ ] Support JPEG, PNG, WebP.
-- [ ] Add large-image safe decode/downsampling.
-- [ ] Record original image size, analysis bitmap size, and whether downsampling occurred.
+- [x] Show image metadata: format, dimensions, file size.
+- [x] Support JPEG, PNG, WebP.
+- [x] Add large-image safe decode/downsampling.
+- [x] Record original image size, analysis bitmap size, and whether downsampling occurred.
 
 ## Phase 2 - Quality Metrics
 

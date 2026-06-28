@@ -43,3 +43,18 @@ data class LoadedImage(
 - Large images use an analysis bitmap with long edge around 1280 px.
 - Metadata/downsampling logic is separate from scoring logic.
 - No OOM-prone full-resolution analysis path is introduced.
+
+## Completion Notes
+
+- Status: completed locally on 2026-06-28.
+- Implementation:
+  - `ImageLoader` reads source bounds first, detects JPEG/PNG/WebP from MIME type or display name, reads file size when available, and returns `LoadedImage`.
+  - Preview decoding and analysis decoding are separate; the analysis bitmap is scaled to a long edge around 1280 px.
+  - `ImageAnalyzerScreen` displays format, original dimensions, analysis dimensions, optional file size, and downsampling status.
+- Tests and verification:
+  - TDD red run: `.\gradlew.bat :app:testDebugUnitTest` failed before `ImageLoader` existed with unresolved `ImageLoader` references.
+  - Green run: `.\gradlew.bat :app:testDebugUnitTest` succeeded.
+  - Build run: `.\gradlew.bat :app:assembleDebug` succeeded.
+- Notes:
+  - Real-device visual validation remains part of later validation/evidence workstreams.
+  - No scoring logic was added in WS2.

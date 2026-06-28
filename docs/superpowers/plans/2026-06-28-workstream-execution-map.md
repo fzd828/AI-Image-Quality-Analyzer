@@ -64,8 +64,10 @@ Recommended batching:
 ## Current Workstream State
 
 - WS0: mostly complete; Task 1 reviewer approved. Real-device run still pending until Redmi K70E is connected.
-- WS1: draft implementation exists, but review/build acceptance is pending.
-- WS2-WS8: not started.
+- WS1: accepted and committed as the picker/preview baseline.
+- WS2: completed locally. `ImageLoader` now provides metadata, required format detection, preview decode, and safe downsampled analysis bitmap output. Unit tests and debug build have passed.
+- WS3: completed separately as the raw quality metrics engine.
+- WS4-WS8: not started.
 
 ## Conversation Count Recommendation
 

@@ -1,11 +1,6 @@
 package com.example.imagequalityanalyzer.ui
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -28,6 +23,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.imagequalityanalyzer.image.ImageLoader
+import com.example.imagequalityanalyzer.image.LoadedImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -59,29 +56,48 @@ private fun SelectedImagePreview(uri: Uri?) {
     }
 
     val context = LocalContext.current
-    val bitmap by produceState<Bitmap?>(initialValue = null, uri) {
+    val loadState by produceState<ImageLoadState>(initialValue = ImageLoadState.Loading, uri) {
         value = withContext(Dispatchers.IO) {
-            decodeBitmapForPreview(context, uri)
+            ImageLoader.load(context, uri)?.let(ImageLoadState::Loaded) ?: ImageLoadState.Error
         }
     }
 
-    if (bitmap == null) {
-        Text("Loading image...")
-    } else {
+    when (val state = loadState) {
+        ImageLoadState.Loading -> Text("Loading image...")
+        ImageLoadState.Error -> Text("Unable to load image")
+        is ImageLoadState.Loaded -> LoadedImagePreview(state.image)
+    }
+}
+
+@Composable
+private fun LoadedImagePreview(image: LoadedImage) {
+    Column {
         Image(
-            bitmap = bitmap!!.asImageBitmap(),
+            bitmap = image.previewBitmap.asImageBitmap(),
             contentDescription = "Selected image",
             modifier = Modifier.fillMaxWidth().height(280.dp),
             contentScale = ContentScale.Fit
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Format: ${image.format}")
+        Text("Original: ${image.originalWidth} x ${image.originalHeight}")
+        Text("Analysis: ${image.analysisWidth} x ${image.analysisHeight}")
+        image.fileSizeBytes?.let { size ->
+            Text("File size: ${formatFileSize(size)}")
+        }
+        Text("Downsampled for analysis: ${if (image.downsampled) "Yes" else "No"}")
     }
 }
 
-private fun decodeBitmapForPreview(context: Context, uri: Uri): Bitmap? =
-    runCatching {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
-        } else {
-            context.contentResolver.openInputStream(uri)?.use(BitmapFactory::decodeStream)
-        }
-    }.getOrNull()
+private sealed interface ImageLoadState {
+    data object Loading : ImageLoadState
+    data object Error : ImageLoadState
+    data class Loaded(val image: LoadedImage) : ImageLoadState
+}
+
+private fun formatFileSize(bytes: Long): String =
+    when {
+        bytes >= 1024L * 1024L -> "%.1f MB".format(bytes / (1024.0 * 1024.0))
+        bytes >= 1024L -> "%.1f KB".format(bytes / 1024.0)
+        else -> "$bytes B"
+    }
