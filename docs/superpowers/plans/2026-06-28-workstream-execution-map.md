@@ -34,11 +34,10 @@ You do not need to create all conversations at once.
 
 Recommended batching:
 
-- First batch now: WS1, WS3, WS5, WS7.
-- Second batch after WS1 passes review: WS2.
-- Third batch after WS2 and WS3 complete: WS4.
-- Fourth batch after WS4 and WS5 complete: WS6.
-- Final batch after WS6 and WS7 complete: WS8.
+- Completed code batch: WS1, WS2, WS3, and WS4.
+- Current batch: WS5 sample set and WS7 documentation drafts can proceed.
+- Next batch after WS5 completes: WS6 validation evidence run.
+- Final batch after WS6 and WS7 complete: WS8 final ZIP package.
 
 | ID | Name | Can Start When | Main Output |
 |---|---|---|---|
@@ -64,22 +63,25 @@ Recommended batching:
 ## Current Workstream State
 
 - WS0: mostly complete; Task 1 reviewer approved. Real-device run still pending until Redmi K70E is connected.
-- WS1: accepted and committed as the picker/preview baseline.
-- WS2: completed locally. `ImageLoader` now provides metadata, required format detection, preview decode, and safe downsampled analysis bitmap output. Unit tests and debug build have passed.
-- WS3: completed separately as the raw quality metrics engine.
-- WS4-WS8: not started.
+- WS1: completed and committed as `cad805e feat: add image picker preview flow`.
+- WS2: completed and committed as `7e41851 feat: add safe image loading metadata`.
+- WS3: completed and committed as `a028db2 feat: add image quality metrics engine`; memory optimization committed as `f2ba977 perf: stream laplacian variance calculation`.
+- WS4: completed and committed as `d3b2d57 feat: add scoring result ui`; scroll/inset fix committed as `ad853b3 fix: add result screen scroll insets`.
+- WS5: not started or not yet accepted in this main thread. It is the next required input for WS6.
+- WS6: blocked until WS5 sample set exists.
+- WS7: can continue drafting now, but final pass depends on WS6 evidence.
+- WS8: blocked until WS6 and WS7 complete.
 
 ## Conversation Count Recommendation
 
-If each work package gets its own conversation, create 8 new conversations total because WS0 is already done.
+WS1-WS4 are complete and should not keep producing code.
 
-Do not create all 8 immediately. Create them in dependency order:
+From the current state, create or continue conversations in this order:
 
-1. Now: create 4 conversations for WS1, WS3, WS5, and WS7.
-2. After WS1 is accepted: create WS2.
-3. After WS2 and WS3 are accepted: create WS4.
-4. After WS4 and WS5 are accepted: create WS6.
-5. After WS6 and WS7 are accepted: create WS8.
+1. Now: continue or create WS5 for the Redmi K70E sample set.
+2. Now: continue or create WS7 for documentation drafts, staying out of app code.
+3. After WS5 is accepted: create WS6 for validation evidence.
+4. After WS6 and WS7 are accepted: create WS8 for the final ZIP package.
 
 If you want fewer conversations, merge these pairs:
 
@@ -93,9 +95,13 @@ That reduces the total to 6 conversations, but the 8-conversation version is cle
 Use prompts like:
 
 ```text
-请执行 WS2 图片解码、元数据与大图安全。先读 AGENTS.md 和 docs/superpowers/task-packets/WS2-decode-metadata-large-image-safety.md，只做这个工作包。
+请执行 WS5 红米 K70E 样本图片集。先读 AGENTS.md 和 docs/superpowers/task-packets/WS5-redmi-sample-set.md，只做这个工作包。不要修改 app 代码、OpenSpec 或其他工作包文档。
 ```
 
 ```text
 请执行 WS7 比赛必交文档包。先读 AGENTS.md 和 docs/superpowers/task-packets/WS7-contest-documentation-pack.md，只做文档，不改 app 代码。
+```
+
+```text
+请执行 WS6 验证证据运行与整理。只有在 WS5 样本集完成后再开始。先读 AGENTS.md 和 docs/superpowers/task-packets/WS6-validation-evidence-run.md，只做这个工作包。
 ```

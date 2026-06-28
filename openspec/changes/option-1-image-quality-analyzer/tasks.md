@@ -11,17 +11,19 @@ These packages are the canonical execution units for future conversations.
 - [x] **WS1 - Picker Preview Flow（图片选择与预览流程）**
   - Depends on WS0.
   - Implements local image selection and preview only.
-  - Current status: reviewer approved; committed separately from WS3.
+  - Current status: implemented, reviewed, and committed as `cad805e`.
 - [x] **WS2 - Decode Metadata And Large Image Safety（图片解码、元数据与大图安全）**
   - Depends on WS1.
   - Adds image metadata, format detection, and safe downsampled analysis bitmap.
-  - Current status: implemented in `ImageLoader`, wired into preview UI, and verified with unit tests plus debug build.
+  - Current status: implemented in `ImageLoader`, wired into preview UI, verified with unit tests plus debug build, and committed as `7e41851`.
 - [x] **WS3 - Quality Metrics Engine（画质指标计算引擎）**
   - Depends on WS0.
   - Can run in parallel with WS2 if it only writes `analysis/` code and tests.
+  - Current status: implemented and committed as `a028db2`; Laplacian variance memory optimization committed as `f2ba977`.
 - [x] **WS4 - Scoring And Result UI（评分规则与结果展示界面）**
   - Depends on WS2 and WS3.
   - Adds 0-100 sub-scores, overall score, explanation, and analysis time display.
+  - Current status: implemented and committed as `d3b2d57`; result screen scroll/inset fix committed as `ad853b3`.
 - [ ] **WS5 - Redmi K70E Sample Set（红米 K70E 样本图片集）**
   - Depends on WS0.
   - Can run in parallel with implementation.
@@ -42,13 +44,13 @@ Detailed package briefs live under `docs/superpowers/task-packets/`.
 
 - [x] Confirm app platform and development environment.
 - [x] Create final repository/package structure.
-- [ ] Keep this task list updated as evidence of process.
+- [x] Keep this task list updated as evidence of process through WS4.
 
 ## Phase 1 - Android MVP
 
-- [ ] Create Android project.
-- [ ] Implement image picker.
-- [ ] Preview selected image.
+- [x] Create Android project.
+- [x] Implement image picker.
+- [x] Preview selected image.
 - [x] Show image metadata: format, dimensions, file size.
 - [x] Support JPEG, PNG, WebP.
 - [x] Add large-image safe decode/downsampling.
@@ -56,7 +58,7 @@ Detailed package briefs live under `docs/superpowers/task-packets/`.
 
 ## Phase 2 - Quality Metrics
 
-- [ ] Implement grayscale conversion.
+- [x] Implement grayscale conversion.
 - [x] Implement sharpness score.
 - [x] Implement exposure score.
 - [x] Implement contrast score.
