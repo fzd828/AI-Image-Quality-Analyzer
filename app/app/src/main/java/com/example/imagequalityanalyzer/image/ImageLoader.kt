@@ -4,7 +4,9 @@ import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.provider.OpenableColumns
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -33,7 +35,13 @@ object ImageLoader {
 
     fun load(context: Context, uri: Uri): LoadedImage? = runCatching {
         val resolver = context.contentResolver
-        val metadata = queryMetadata(resolver, uri)
+        val metadata = metadataOrFallback {
+            queryMetadata(resolver, uri)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            return@runCatching loadWithImageDecoder(resolver, uri, metadata)
+        }
+
         val bounds = readBounds(resolver, uri) ?: return@runCatching null
         if (bounds.width <= 0 || bounds.height <= 0) {
             return@runCatching null
@@ -101,6 +109,55 @@ object ImageLoader {
         return inSampleSize
     }
 
+    @androidx.annotation.RequiresApi(Build.VERSION_CODES.P)
+    private fun loadWithImageDecoder(
+        resolver: ContentResolver,
+        uri: Uri,
+        metadata: SourceMetadata
+    ): LoadedImage? {
+        val preview = decodeBitmapForLongEdgeWithImageDecoder(resolver, uri, PREVIEW_LONG_EDGE)
+            ?: return null
+        val analysis = decodeBitmapForLongEdgeWithImageDecoder(resolver, uri, ANALYSIS_LONG_EDGE)
+            ?: return null
+        val originalWidth = preview.originalWidth
+        val originalHeight = preview.originalHeight
+
+        return LoadedImage(
+            previewBitmap = preview.bitmap,
+            analysisBitmap = analysis.bitmap,
+            format = detectFormat(resolver.getType(uri), metadata.displayName),
+            originalWidth = originalWidth,
+            originalHeight = originalHeight,
+            analysisWidth = analysis.bitmap.width,
+            analysisHeight = analysis.bitmap.height,
+            fileSizeBytes = metadata.fileSizeBytes,
+            downsampled = analysis.bitmap.width != originalWidth || analysis.bitmap.height != originalHeight
+        )
+    }
+
+    @androidx.annotation.RequiresApi(Build.VERSION_CODES.P)
+    private fun decodeBitmapForLongEdgeWithImageDecoder(
+        resolver: ContentResolver,
+        uri: Uri,
+        maxLongEdge: Int
+    ): DecodedBitmap? = runCatching {
+        var originalWidth = 0
+        var originalHeight = 0
+        val source = ImageDecoder.createSource(resolver, uri)
+        val bitmap = ImageDecoder.decodeBitmap(source) { decoder, info, _ ->
+            originalWidth = info.size.width
+            originalHeight = info.size.height
+            val target = targetBitmapSize(originalWidth, originalHeight, maxLongEdge)
+            decoder.setTargetSize(target.width, target.height)
+            decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+        }
+        if (originalWidth <= 0 || originalHeight <= 0) {
+            null
+        } else {
+            DecodedBitmap(bitmap = bitmap, originalWidth = originalWidth, originalHeight = originalHeight)
+        }
+    }.getOrNull()
+
     private fun detectFormatFromName(displayName: String?): String {
         val lowerName = displayName.orEmpty().lowercase()
         return when {
@@ -167,6 +224,9 @@ object ImageLoader {
         return Bitmap.createScaledBitmap(decoded, target.width, target.height, true)
     }
 
+    internal fun metadataOrFallback(queryMetadata: () -> SourceMetadata): SourceMetadata =
+        runCatching(queryMetadata).getOrDefault(SourceMetadata(displayName = null, fileSizeBytes = null))
+
     private fun queryMetadata(resolver: ContentResolver, uri: Uri): SourceMetadata {
         resolver.query(
             uri,
@@ -193,7 +253,7 @@ object ImageLoader {
     private fun android.database.Cursor.getNullableLong(index: Int): Long? =
         if (index >= 0 && !isNull(index)) getLong(index) else null
 
-    private data class SourceMetadata(
+    data class SourceMetadata(
         val displayName: String?,
         val fileSizeBytes: Long?
     )
@@ -201,5 +261,11 @@ object ImageLoader {
     private data class DecodedBounds(
         val width: Int,
         val height: Int
+    )
+
+    private data class DecodedBitmap(
+        val bitmap: Bitmap,
+        val originalWidth: Int,
+        val originalHeight: Int
     )
 }

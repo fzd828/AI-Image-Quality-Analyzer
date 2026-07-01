@@ -38,4 +38,14 @@ class ImageLoaderTest {
         assertEquals(2, ImageLoader.calculateInSampleSize(originalWidth = 4000, originalHeight = 3000))
         assertEquals(8, ImageLoader.calculateInSampleSize(originalWidth = 12000, originalHeight = 9000))
     }
+
+    @Test
+    fun metadataQueryFailureFallsBackToUnknownMetadata() {
+        val metadata = ImageLoader.metadataOrFallback {
+            error("Photo Picker provider does not expose OpenableColumns")
+        }
+
+        assertEquals(null, metadata.displayName)
+        assertEquals(null, metadata.fileSizeBytes)
+    }
 }
