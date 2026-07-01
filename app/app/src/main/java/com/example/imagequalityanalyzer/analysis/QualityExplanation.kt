@@ -23,27 +23,27 @@ object QualityExplanation {
                 colorCastScore
             ).all { it >= ACCEPTABLE_SUB_SCORE }
         ) {
-            return "Overall good quality. The image has balanced exposure, contrast, and color."
+            return "整体画质较好，曝光、对比度和色彩表现较均衡。"
         }
 
         return when (lowest) {
-            Issue.Sharpness -> "Main issue: the image may be blurry or lack fine edge detail."
+            Issue.Sharpness -> "主要问题：图片可能模糊，或缺少细节边缘。"
             Issue.Exposure -> exposureExplanation(metrics)
-            Issue.Contrast -> "Main issue: the image has low contrast, so details may look flat."
-            Issue.ColorCast -> "Main issue: a color cast may be affecting the image white balance."
+            Issue.Contrast -> "主要问题：图片对比度偏低，细节可能显得发灰。"
+            Issue.ColorCast -> "主要问题：图片可能存在偏色，影响白平衡表现。"
         }
     }
 
     private fun exposureExplanation(metrics: QualityMetrics): String =
         when {
             metrics.overexposedRatio > metrics.underexposedRatio ->
-                "Main issue: the image appears overexposed with too many clipped bright pixels."
+                "主要问题：图片可能过曝，高亮区域裁剪像素过多。"
             metrics.underexposedRatio > metrics.overexposedRatio ->
-                "Main issue: the image appears underexposed with too many clipped dark pixels."
+                "主要问题：图片可能欠曝，暗部区域裁剪像素过多。"
             metrics.meanLuminance > BRIGHT_LUMINANCE ->
-                "Main issue: the image appears too bright overall."
+                "主要问题：图片整体偏亮。"
             else ->
-                "Main issue: the image appears too dark overall."
+                "主要问题：图片整体偏暗。"
         }
 
     private enum class Issue {

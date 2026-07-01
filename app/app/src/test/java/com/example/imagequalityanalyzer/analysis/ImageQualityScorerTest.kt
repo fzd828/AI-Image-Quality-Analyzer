@@ -23,7 +23,7 @@ class ImageQualityScorerTest {
         assertEquals(100, result.contrastScore)
         assertEquals(100, result.colorCastScore)
         assertEquals(91, result.overallScore)
-        assertTrue(result.explanation.contains("good", ignoreCase = true))
+        assertTrue(result.explanation.contains("画质较好"))
     }
 
     @Test
@@ -41,7 +41,7 @@ class ImageQualityScorerTest {
 
         assertEquals(11, result.exposureScore)
         assertTrue(result.exposureScore < result.sharpnessScore)
-        assertTrue(result.explanation.contains("overexposed", ignoreCase = true))
+        assertTrue(result.explanation.contains("过曝"))
     }
 
     @Test
@@ -58,6 +58,6 @@ class ImageQualityScorerTest {
         )
 
         assertEquals(10, result.colorCastScore)
-        assertTrue(result.explanation.contains("color cast", ignoreCase = true))
+        assertTrue(result.explanation.contains("偏色"))
     }
 }

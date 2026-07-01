@@ -56,7 +56,7 @@ fun ImageAnalyzerScreen() {
             .padding(16.dp)
     ) {
         Button(onClick = { picker.launch("image/*") }) {
-            Text("Select image")
+            Text("选择图片")
         }
         Spacer(modifier = Modifier.height(16.dp))
         SelectedImagePreview(selectedUri)
@@ -66,7 +66,7 @@ fun ImageAnalyzerScreen() {
 @Composable
 private fun SelectedImagePreview(uri: Uri?) {
     if (uri == null) {
-        Text("No image selected")
+        Text("尚未选择图片")
         return
     }
 
@@ -78,8 +78,8 @@ private fun SelectedImagePreview(uri: Uri?) {
     }
 
     when (val state = loadState) {
-        ImageLoadState.Loading -> Text("Loading image...")
-        ImageLoadState.Error -> Text("Unable to load image")
+        ImageLoadState.Loading -> Text("正在加载图片...")
+        ImageLoadState.Error -> Text("无法加载图片")
         is ImageLoadState.Loaded -> LoadedImagePreview(state.image)
     }
 }
@@ -89,18 +89,18 @@ private fun LoadedImagePreview(image: LoadedImage) {
     Column {
         Image(
             bitmap = image.previewBitmap.asImageBitmap(),
-            contentDescription = "Selected image",
+            contentDescription = "已选择的图片",
             modifier = Modifier.fillMaxWidth().height(280.dp),
             contentScale = ContentScale.Fit
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Format: ${image.format}")
-        Text("Original: ${image.originalWidth} x ${image.originalHeight}")
-        Text("Analysis: ${image.analysisWidth} x ${image.analysisHeight}")
+        Text("格式：${image.format}")
+        Text("原始尺寸：${image.originalWidth} x ${image.originalHeight}")
+        Text("分析尺寸：${image.analysisWidth} x ${image.analysisHeight}")
         image.fileSizeBytes?.let { size ->
-            Text("File size: ${formatFileSize(size)}")
+            Text("文件大小：${formatFileSize(size)}")
         }
-        Text("Downsampled for analysis: ${if (image.downsampled) "Yes" else "No"}")
+        Text("分析时已降采样：${if (image.downsampled) "是" else "否"}")
         Spacer(modifier = Modifier.height(16.dp))
         AnalysisResult(image)
     }
@@ -118,16 +118,16 @@ private fun AnalysisResult(image: LoadedImage) {
     }
 
     when (val state = analysisState) {
-        AnalysisState.Analyzing -> Text("Analyzing image...")
+        AnalysisState.Analyzing -> Text("正在分析图片...")
         is AnalysisState.Analyzed -> {
-            Text("Overall score: ${state.result.overallScore}/100")
-            Text("Analysis time: ${state.elapsedMillis} ms")
-            Text("Diagnosis: ${state.result.explanation}")
+            Text("综合评分：${state.result.overallScore}/100")
+            Text("分析耗时：${state.elapsedMillis} ms")
+            Text("诊断：${state.result.explanation}")
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Sharpness: ${state.result.sharpnessScore}/100")
-            Text("Exposure: ${state.result.exposureScore}/100")
-            Text("Contrast: ${state.result.contrastScore}/100")
-            Text("Color cast: ${state.result.colorCastScore}/100")
+            Text("清晰度：${state.result.sharpnessScore}/100")
+            Text("曝光：${state.result.exposureScore}/100")
+            Text("对比度：${state.result.contrastScore}/100")
+            Text("偏色：${state.result.colorCastScore}/100")
         }
     }
 }
