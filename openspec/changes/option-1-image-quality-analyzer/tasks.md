@@ -24,13 +24,15 @@ These packages are the canonical execution units for future conversations.
   - Depends on WS2 and WS3.
   - Adds 0-100 sub-scores, overall score, explanation, and analysis time display.
   - Current status: implemented and committed as `d3b2d57`; result screen scroll/inset fix committed as `ad853b3`.
-- [ ] **WS5 - Redmi K70E Sample Set（红米 K70E 样本图片集）**
+- [x] **WS5 - Redmi K70E Sample Set（红米 K70E 样本图片集）**
   - Depends on WS0.
   - Can run in parallel with implementation.
   - Prepares self-shot and derived validation images.
-- [ ] **WS6 - Validation Evidence Run（验证证据运行与整理）**
+  - Current status: comparison sample set prepared and committed as `bbfa008`; current samples are documented Wikimedia/open-license samples, with Redmi K70E self-shot samples still listed as follow-up evidence.
+- [x] **WS6 - Validation Evidence Run（验证证据运行与整理）**
   - Depends on WS4 and WS5.
   - Produces CSV logs, screenshots, validation table, and counterexample analysis.
+  - Current status: validation framework and emulator evidence committed as `935603f` and `8e57d7c`; Photo Picker decode fix committed as `726333b`. Redmi K70E true-device screenshots and timing remain pending follow-up evidence.
 - [ ] **WS7 - Contest Documentation Pack（比赛必交文档包）**
   - Depends on WS0 for drafts; final pass depends on WS6.
   - Completes README, algorithm notes, AI collaboration, constraints, and scoring alignment.
@@ -69,12 +71,13 @@ Detailed package briefs live under `docs/superpowers/task-packets/`.
 
 ## Phase 3 - Validation Evidence
 
-- [ ] Prepare sample categories: clear, blur, overexposed, underexposed, noisy.
-- [ ] Collect 2-3 images per category.
-- [ ] Run app against all samples.
-- [ ] Record sub-scores, overall score, and manual judgment.
-- [ ] Add screenshots or logs.
-- [ ] Add at least one counterexample and explain why it fails.
+- [x] Prepare sample categories: clear, blur, overexposed, underexposed, noisy.
+- [x] Collect 2-3 images per category.
+- [x] Run app against representative JPEG, PNG, and WebP samples on Android Emulator API 36.1.
+- [ ] Run app against all samples on Redmi K70E true device.
+- [x] Record sub-scores, overall score, and manual judgment.
+- [x] Add screenshots or logs.
+- [x] Add at least one counterexample and explain why it fails.
 
 ## Phase 4 - Contest Documents
 
