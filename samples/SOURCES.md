@@ -3,10 +3,11 @@
 This file records the source, license, preparation, manual judgment, and
 expected app behavior for the external comparison samples in `samples/`.
 
-All online samples were downloaded from Wikimedia Commons. They are not Redmi
-K70E self-shot images. They may be used as official comparison samples because
-the contest requires comparison samples and does not require all samples to be
-self-shot. Keep the source page, author, and license with the final submission.
+Online samples were downloaded from Wikimedia Commons and NASA Visible Earth.
+They are not Redmi K70E self-shot images. They may be used as official
+comparison samples because the contest requires comparison samples and does not
+require all samples to be self-shot. Keep the source page, author, and license
+with the final submission.
 
 ## Category Samples
 
@@ -39,10 +40,18 @@ self-shot. Keep the source page, author, and license with the final submission.
 | `formats/format_clear_png_01.png` | Derived from `clear/clear_butterfly_01.jpg` | CC BY-SA 4.0, Charles J. Sharp | Converted locally to PNG with Pillow |
 | `formats/format_clear_webp_01.webp` | Derived from `clear/clear_butterfly_01.jpg` | CC BY-SA 4.0, Charles J. Sharp | Converted locally to WebP with Pillow |
 
+## Large Image Sample
+
+| File | Source Page | Author | License/Use | Preparation | Manual Judgment | Expected App Behavior |
+|---|---|---|---|---|---|---|
+| `large/large_blue_marble_january_01.jpg` | <https://assets.science.nasa.gov/content/dam/science/esd/eo/images/bmng/bmng-topography-bathymetry/january/world.topo.bathy.200401.3x5400x2700.jpg> | NASA Visible Earth | NASA public-use imagery; credit NASA Visible Earth | Downloaded 5400 x 2700 JPEG from NASA assets | Large 14.58 MP Earth image for performance and downsampling validation | App should load safely, downsample to 1280 long edge for analysis, and finish within an acceptable time |
+
 ## Notes
 
 - These images satisfy the contest comparison sample requirement with 3 files
   each for clear, blur, overexposed, underexposed, and noisy categories.
 - Three counterexamples are included for later WS6 analysis.
+- The NASA large-image sample is included specifically for the contest runtime
+  note about acceptable analysis time and large-image handling.
 - All app scores remain pending until WS6 runs the Android app against these
   samples.

@@ -14,6 +14,20 @@ Redmi K70E true-device screenshots.
 | `emulator_format_clear_png_result.png` | `samples/formats/format_clear_png_01.png` | Android Emulator `Medium_Phone`, API 36.1 | Captured | PNG format sample result, overall 60/100. |
 | `emulator_format_clear_webp_result.png` | `samples/formats/format_clear_webp_01.webp` | Android Emulator `Medium_Phone`, API 36.1 | Captured | WebP format sample result, overall 59/100. |
 
+## Simplified Chinese Emulator UI Evidence
+
+These screenshots were captured after the App UI text was localized to
+Simplified Chinese. They are Android Emulator evidence, not Redmi K70E
+true-device evidence.
+
+| Screenshot | Sample | Device | Status | Notes |
+|---|---|---|---|---|
+| `模拟器_简体中文_应用启动页.png` | App launch screen | Android Emulator `Medium_Phone`, API 36.1 | Captured | Shows the localized initial state. |
+| `模拟器_简体中文_清晰蝴蝶_JPEG_分析结果.png` | `samples/clear/clear_butterfly_01.jpg` | Android Emulator `Medium_Phone`, API 36.1 | Captured | Localized JPEG clear sample result. |
+| `模拟器_简体中文_失焦模糊_JPEG_分析结果.png` | `samples/blur/blur_out_of_focus_03.jpg` | Android Emulator `Medium_Phone`, API 36.1 | Captured | Localized blur sample result. |
+| `模拟器_简体中文_PNG格式清晰样本_分析结果.png` | `samples/formats/format_clear_png_01.png` | Android Emulator `Medium_Phone`, API 36.1 | Captured | Localized PNG format sample result. |
+| `模拟器_简体中文_WebP格式清晰样本_分析结果.png` | `samples/formats/format_clear_webp_01.webp` | Android Emulator `Medium_Phone`, API 36.1 | Captured | Localized WebP format sample result. |
+
 ## Pending Redmi K70E Evidence
 
 No Redmi K70E true-device screenshots are present yet. The items below should be
