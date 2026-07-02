@@ -33,6 +33,32 @@ class ImageLoaderTest {
     }
 
     @Test
+    fun targetAnalysisSizeUsesFastModeLongEdge1280() {
+        val size = ImageLoader.targetAnalysisSize(
+            originalWidth = 4000,
+            originalHeight = 3000,
+            mode = AnalysisMode.Fast
+        )
+
+        assertEquals(1280, size.width)
+        assertEquals(960, size.height)
+        assertTrue(size.downsampled)
+    }
+
+    @Test
+    fun targetAnalysisSizeUsesDetailedModeLongEdge2560() {
+        val size = ImageLoader.targetAnalysisSize(
+            originalWidth = 4000,
+            originalHeight = 3000,
+            mode = AnalysisMode.Detailed
+        )
+
+        assertEquals(2560, size.width)
+        assertEquals(1920, size.height)
+        assertTrue(size.downsampled)
+    }
+
+    @Test
     fun sampleSizeChoosesSafePowerOfTwoDecodeFloor() {
         assertEquals(1, ImageLoader.calculateInSampleSize(originalWidth = 1280, originalHeight = 960))
         assertEquals(2, ImageLoader.calculateInSampleSize(originalWidth = 4000, originalHeight = 3000))

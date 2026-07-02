@@ -4,17 +4,35 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,14 +40,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.imagequalityanalyzer.analysis.ImageQualityAnalyzer
 import com.example.imagequalityanalyzer.analysis.ImageQualityScorer
 import com.example.imagequalityanalyzer.analysis.QualityResult
+import com.example.imagequalityanalyzer.image.AnalysisMode
 import com.example.imagequalityanalyzer.image.ImageLoader
 import com.example.imagequalityanalyzer.image.LoadedImage
 import kotlinx.coroutines.Dispatchers
@@ -39,69 +65,231 @@ import kotlin.system.measureTimeMillis
 @Composable
 fun ImageAnalyzerScreen() {
     var selectedUri by remember { mutableStateOf<Uri?>(null) }
+    var analysisMode by remember { mutableStateOf(AnalysisMode.Fast) }
+    var analysisRequested by remember { mutableStateOf(false) }
     val picker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         if (uri != null) {
             selectedUri = uri
+            analysisRequested = false
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        Button(onClick = { picker.launch("image/*") }) {
-            Text("选择图片")
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
+        ) {
+            Header()
+            AnalysisModeSection(
+                selectedMode = analysisMode,
+                onModeSelected = { mode ->
+                    analysisMode = mode
+                    analysisRequested = false
+                }
+            )
+
+            if (selectedUri == null) {
+                EmptyState(onSelectImage = { picker.launch("image/*") })
+            } else {
+                SelectedImagePreview(
+                    uri = checkNotNull(selectedUri),
+                    analysisMode = analysisMode,
+                    analysisRequested = analysisRequested,
+                    onReselect = { picker.launch("image/*") },
+                    onStartAnalysis = { analysisRequested = true }
+                )
+            }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        SelectedImagePreview(selectedUri)
     }
 }
 
 @Composable
-private fun SelectedImagePreview(uri: Uri?) {
-    if (uri == null) {
-        Text("尚未选择图片")
-        return
+private fun Header() {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            text = "画质分析工作台",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Text(
+            text = "本地图片质量评估",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AnalysisModeSection(
+    selectedMode: AnalysisMode,
+    onModeSelected: (AnalysisMode) -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            SectionTitle("分析模式")
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                AnalysisMode.entries.forEachIndexed { index, mode ->
+                    SegmentedButton(
+                        selected = selectedMode == mode,
+                        onClick = { onModeSelected(mode) },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = index,
+                            count = AnalysisMode.entries.size
+                        ),
+                        label = {
+                            Text(
+                                text = "${mode.displayName} ${mode.maxLongEdge}",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun EmptyState(onSelectImage: () -> Unit) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            SectionTitle("图片预览")
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1.35f)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "尚未选择图片",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Button(
+                onClick = onSelectImage,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("选择图片")
+            }
+        }
+    }
+}
+
+@Composable
+private fun SelectedImagePreview(
+    uri: Uri,
+    analysisMode: AnalysisMode,
+    analysisRequested: Boolean,
+    onReselect: () -> Unit,
+    onStartAnalysis: () -> Unit
+) {
     val context = LocalContext.current
-    val loadState by produceState<ImageLoadState>(initialValue = ImageLoadState.Loading, uri) {
+    val loadState by produceState<ImageLoadState>(
+        initialValue = ImageLoadState.Loading,
+        uri,
+        analysisMode
+    ) {
         value = withContext(Dispatchers.IO) {
-            ImageLoader.load(context, uri)?.let(ImageLoadState::Loaded) ?: ImageLoadState.Error
+            ImageLoader.load(context, uri, analysisMode)?.let(ImageLoadState::Loaded)
+                ?: ImageLoadState.Error
         }
     }
 
     when (val state = loadState) {
-        ImageLoadState.Loading -> Text("正在加载图片...")
-        ImageLoadState.Error -> Text("无法加载图片")
-        is ImageLoadState.Loaded -> LoadedImagePreview(state.image)
+        ImageLoadState.Loading -> StatusCard("正在加载图片...")
+        ImageLoadState.Error -> StatusCard("无法加载图片")
+        is ImageLoadState.Loaded -> LoadedImagePreview(
+            image = state.image,
+            analysisRequested = analysisRequested,
+            onReselect = onReselect,
+            onStartAnalysis = onStartAnalysis
+        )
     }
 }
 
 @Composable
-private fun LoadedImagePreview(image: LoadedImage) {
-    Column {
-        Image(
-            bitmap = image.previewBitmap.asImageBitmap(),
-            contentDescription = "已选择的图片",
-            modifier = Modifier.fillMaxWidth().height(280.dp),
-            contentScale = ContentScale.Fit
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("格式：${image.format}")
-        Text("原始尺寸：${image.originalWidth} x ${image.originalHeight}")
-        Text("分析尺寸：${image.analysisWidth} x ${image.analysisHeight}")
-        image.fileSizeBytes?.let { size ->
-            Text("文件大小：${formatFileSize(size)}")
+private fun LoadedImagePreview(
+    image: LoadedImage,
+    analysisRequested: Boolean,
+    onReselect: () -> Unit,
+    onStartAnalysis: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            SectionTitle("图片预览")
+            Image(
+                bitmap = image.previewBitmap.asImageBitmap(),
+                contentDescription = "已选择的图片预览",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1.25f)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                contentScale = ContentScale.Fit
+            )
+            MetadataGrid(
+                rows = listOf(
+                    "格式" to image.format,
+                    "原始尺寸" to "${image.originalWidth} x ${image.originalHeight}",
+                    "文件大小" to image.fileSizeBytes?.let(::formatFileSize).orEmpty().ifBlank { "未知" }
+                )
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedButton(
+                    onClick = onReselect,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("重新选择")
+                }
+                Button(
+                    onClick = onStartAnalysis,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("开始分析")
+                }
+            }
         }
-        Text("分析时已降采样：${if (image.downsampled) "是" else "否"}")
-        Spacer(modifier = Modifier.height(16.dp))
+    }
+
+    if (analysisRequested) {
         AnalysisResult(image)
     }
 }
@@ -118,17 +306,180 @@ private fun AnalysisResult(image: LoadedImage) {
     }
 
     when (val state = analysisState) {
-        AnalysisState.Analyzing -> Text("正在分析图片...")
-        is AnalysisState.Analyzed -> {
-            Text("综合评分：${state.result.overallScore}/100")
-            Text("分析耗时：${state.elapsedMillis} ms")
-            Text("诊断：${state.result.explanation}")
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("清晰度：${state.result.sharpnessScore}/100")
-            Text("曝光：${state.result.exposureScore}/100")
-            Text("对比度：${state.result.contrastScore}/100")
-            Text("偏色：${state.result.colorCastScore}/100")
+        AnalysisState.Analyzing -> StatusCard("正在分析图片...")
+        is AnalysisState.Analyzed -> ResultCard(
+            image = image,
+            result = state.result,
+            elapsedMillis = state.elapsedMillis
+        )
+    }
+}
+
+@Composable
+private fun ResultCard(
+    image: LoadedImage,
+    result: QualityResult,
+    elapsedMillis: Long
+) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            SectionTitle("分析结果")
+            MetadataGrid(
+                rows = listOf(
+                    "分析模式" to "${image.analysisMode.displayName}（最长边 ${image.analysisMode.maxLongEdge}）",
+                    "分析尺寸" to "${image.analysisWidth} x ${image.analysisHeight}",
+                    "大图安全处理" to if (image.downsampled) "已安全缩放" else "原尺寸已在安全范围",
+                    "分析耗时" to "$elapsedMillis ms"
+                )
+            )
+            ScoreSummary(result.overallScore)
+            ScoreRow(label = "清晰度", score = result.sharpnessScore)
+            ScoreRow(label = "曝光", score = result.exposureScore)
+            ScoreRow(label = "对比度", score = result.contrastScore)
+            ScoreRow(label = "偏色", score = result.colorCastScore)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(
+                    text = "诊断",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = result.explanation,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun ScoreSummary(overallScore: Int) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(
+                Brush.horizontalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.tertiaryContainer
+                    )
+                )
+            )
+            .padding(18.dp)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                text = "综合评分",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Text(
+                text = "$overallScore/100",
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+    }
+}
+
+@Composable
+private fun ScoreRow(label: String, score: Int) {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = "$score/100",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+        LinearProgressIndicator(
+            progress = { score / 100f },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            color = scoreColor(score),
+            trackColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    }
+}
+
+@Composable
+private fun MetadataGrid(rows: List<Pair<String, String>>) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        rows.forEach { (label, value) ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = value,
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.End,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SectionTitle(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.onSurface
+    )
+}
+
+@Composable
+private fun StatusCard(message: String) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Text(
+            text = message,
+            modifier = Modifier.padding(16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
@@ -165,6 +516,14 @@ private sealed interface AnalysisState {
         val elapsedMillis: Long
     ) : AnalysisState
 }
+
+@Composable
+private fun scoreColor(score: Int): Color =
+    when {
+        score >= 80 -> MaterialTheme.colorScheme.primary
+        score >= 60 -> MaterialTheme.colorScheme.tertiary
+        else -> MaterialTheme.colorScheme.error
+    }
 
 private fun formatFileSize(bytes: Long): String =
     when {

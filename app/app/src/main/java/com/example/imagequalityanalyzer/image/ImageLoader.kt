@@ -14,6 +14,7 @@ import kotlin.math.roundToInt
 data class LoadedImage(
     val previewBitmap: Bitmap,
     val analysisBitmap: Bitmap,
+    val analysisMode: AnalysisMode,
     val format: String,
     val originalWidth: Int,
     val originalHeight: Int,
@@ -23,6 +24,14 @@ data class LoadedImage(
     val downsampled: Boolean
 )
 
+enum class AnalysisMode(
+    val displayName: String,
+    val maxLongEdge: Int
+) {
+    Fast(displayName = "极速模式", maxLongEdge = 1280),
+    Detailed(displayName = "精细模式", maxLongEdge = 2560)
+}
+
 data class BitmapSize(
     val width: Int,
     val height: Int,
@@ -30,16 +39,19 @@ data class BitmapSize(
 )
 
 object ImageLoader {
-    private const val ANALYSIS_LONG_EDGE = 1280
     private const val PREVIEW_LONG_EDGE = 1600
 
-    fun load(context: Context, uri: Uri): LoadedImage? = runCatching {
+    fun load(
+        context: Context,
+        uri: Uri,
+        analysisMode: AnalysisMode = AnalysisMode.Fast
+    ): LoadedImage? = runCatching {
         val resolver = context.contentResolver
         val metadata = metadataOrFallback {
             queryMetadata(resolver, uri)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            return@runCatching loadWithImageDecoder(resolver, uri, metadata)
+            return@runCatching loadWithImageDecoder(resolver, uri, metadata, analysisMode)
         }
 
         val bounds = readBounds(resolver, uri) ?: return@runCatching null
@@ -60,12 +72,13 @@ object ImageLoader {
             uri = uri,
             originalWidth = bounds.width,
             originalHeight = bounds.height,
-            maxLongEdge = ANALYSIS_LONG_EDGE
+            maxLongEdge = analysisMode.maxLongEdge
         ) ?: return@runCatching null
 
         LoadedImage(
             previewBitmap = previewBitmap,
             analysisBitmap = analysisBitmap,
+            analysisMode = analysisMode,
             format = detectFormat(resolver.getType(uri), metadata.displayName),
             originalWidth = bounds.width,
             originalHeight = bounds.height,
@@ -89,13 +102,19 @@ object ImageLoader {
     fun targetAnalysisSize(
         originalWidth: Int,
         originalHeight: Int,
-        maxLongEdge: Int = ANALYSIS_LONG_EDGE
+        maxLongEdge: Int = AnalysisMode.Fast.maxLongEdge
     ): BitmapSize = targetBitmapSize(originalWidth, originalHeight, maxLongEdge)
+
+    fun targetAnalysisSize(
+        originalWidth: Int,
+        originalHeight: Int,
+        mode: AnalysisMode
+    ): BitmapSize = targetBitmapSize(originalWidth, originalHeight, mode.maxLongEdge)
 
     fun calculateInSampleSize(
         originalWidth: Int,
         originalHeight: Int,
-        maxLongEdge: Int = ANALYSIS_LONG_EDGE
+        maxLongEdge: Int = AnalysisMode.Fast.maxLongEdge
     ): Int {
         require(originalWidth > 0) { "originalWidth must be positive" }
         require(originalHeight > 0) { "originalHeight must be positive" }
@@ -113,11 +132,16 @@ object ImageLoader {
     private fun loadWithImageDecoder(
         resolver: ContentResolver,
         uri: Uri,
-        metadata: SourceMetadata
+        metadata: SourceMetadata,
+        analysisMode: AnalysisMode
     ): LoadedImage? {
         val preview = decodeBitmapForLongEdgeWithImageDecoder(resolver, uri, PREVIEW_LONG_EDGE)
             ?: return null
-        val analysis = decodeBitmapForLongEdgeWithImageDecoder(resolver, uri, ANALYSIS_LONG_EDGE)
+        val analysis = decodeBitmapForLongEdgeWithImageDecoder(
+            resolver,
+            uri,
+            analysisMode.maxLongEdge
+        )
             ?: return null
         val originalWidth = preview.originalWidth
         val originalHeight = preview.originalHeight
@@ -125,6 +149,7 @@ object ImageLoader {
         return LoadedImage(
             previewBitmap = preview.bitmap,
             analysisBitmap = analysis.bitmap,
+            analysisMode = analysisMode,
             format = detectFormat(resolver.getType(uri), metadata.displayName),
             originalWidth = originalWidth,
             originalHeight = originalHeight,
