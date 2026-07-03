@@ -2,23 +2,56 @@
 
 ## Sharpness / Blur
 
-Candidate method: Laplacian variance on grayscale image.
+Original method: global Laplacian variance on grayscale image.
+
+Sharpness-Calibrate upgrade:
+
+- Keep the original global Laplacian variance as an overall whole-image
+  sharpness signal.
+- Add `focusedLaplacianVariance`: split the analysis bitmap into an 8 x 8
+  grid, compute Laplacian variance per local block, then average the clearest
+  top 25% blocks. This gives more weight to likely subject/detail regions and
+  reduces the penalty from smooth background or shallow depth of field.
+- Add `tenengrad`: Sobel gradient energy. It is useful as extra edge evidence,
+  but noise and dense texture can raise it, so it is only a low-weight
+  auxiliary signal.
 
 Raw signal:
 
-- High variance: more edge/detail response.
-- Low variance: likely blur.
+- High global Laplacian: more whole-frame edge/detail response.
+- High focused Laplacian: at least some local regions contain clear detail.
+- High Tenengrad: strong Sobel edge energy.
+- Low values across all three signals: likely blur or low-detail content.
 
 Parameters to document:
 
 - Analysis bitmap size.
 - Laplacian kernel.
-- Normalization range.
+- Focus grid: 8 x 8 blocks.
+- Focused block selection: top 25% block variances.
+- Sharpness score weights: focused Laplacian 60%, global Laplacian 25%,
+  Tenengrad 15%.
+- Normalization half-score values: focused Laplacian 150, global Laplacian 400,
+  Tenengrad 4000.
+
+Upgrade reason:
+
+The first implementation used only global Laplacian variance. It was simple,
+fast, and explainable, but validation showed two problems: natural photos and
+shallow-depth-of-field images could be dragged down by smooth background areas,
+while noise, dense texture, or high-frequency background detail could raise the
+edge response. The upgraded score uses local-block Laplacian to focus on the
+clearest regions, keeps global Laplacian for whole-frame stability, and adds
+Tenengrad only as supporting edge-energy evidence.
 
 Known limitations:
 
 - Noise and compression artifacts can look like sharp details.
+- Complex texture and high-ISO noise can still increase both local Laplacian
+  and Tenengrad.
 - Smooth scenes may have low edge response even when focused.
+- Artistic blur, motion blur, and shallow depth of field still need human
+  interpretation because the app has no subject or scene-intent model.
 - Thresholds change if the analysis size changes.
 
 ## Exposure

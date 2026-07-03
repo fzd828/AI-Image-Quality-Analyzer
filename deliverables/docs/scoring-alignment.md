@@ -25,7 +25,8 @@ Evidence to prepare:
 
 Examples:
 
-- Laplacian variance can confuse noise with sharpness.
+- Local/global Laplacian and Tenengrad can still confuse noise or dense texture
+  with sharpness.
 - Global brightness can misjudge night scenes as underexposed.
 - Color-balance checks can misjudge sunset photos as color cast.
 
@@ -65,7 +66,7 @@ I can combine AI output, engineering constraints, test data, and my own judgment
 Evidence to prepare:
 
 - Notes on newly learned topics:
-  - Laplacian variance.
+  - Laplacian variance, local-block sharpness, and Tenengrad edge energy.
   - Histogram-based exposure analysis.
   - Android image decoding and downsampling.
   - Format differences among JPEG, PNG, WebP.

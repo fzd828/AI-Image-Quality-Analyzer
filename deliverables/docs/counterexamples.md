@@ -10,34 +10,34 @@ Sample: `samples/blur/blur_subway_motion_01.jpg`
 
 Manual judgment: motion blur from a moving train.
 
-App scoring-log result:
+Recalculated Sharpness-Calibrate scoring-log result:
 
-- Sharpness: 80
+- Sharpness: 90
 - Exposure: 79
 - Contrast: 100
 - Color cast: 100
-- Overall: 87
+- Overall: 90
 - Match: No
 
 Failure reason:
 
 The image contains visible motion blur, but also has strong lines, edges, and
-station detail. Laplacian variance responds to those high-frequency structures,
-so the sharpness score stays high even though the human-visible subject motion
-is blurred.
+station detail. The upgraded local Laplacian and Tenengrad signals still
+respond to those high-frequency structures, so the sharpness score stays high
+even though the human-visible subject motion is blurred.
 
 Possible improvement:
 
 Use a blur metric that considers directional motion blur or compares local edge
-coherence, not only global Laplacian variance.
+coherence, not only local/global edge strength.
 
-## Counterexample 2: Clear Image Penalized By Color/Sharpness Heuristics
+## Improved Case: Clear Image No Longer Penalized Mainly By Sharpness
 
 Sample: `samples/clear/clear_butterfly_01.jpg`
 
 Manual judgment: clear, sharp subject, normal exposure.
 
-Emulator App UI result:
+Previous emulator App UI result before Sharpness-Calibrate:
 
 - Sharpness: 36
 - Exposure: 94
@@ -46,39 +46,46 @@ Emulator App UI result:
 - Overall: 60
 - Match: Partial
 
-Failure reason:
+Recalculated Sharpness-Calibrate result:
 
-The subject is visually clear, but the global scoring formula can under-rate
-macro/nature images when the sharp subject occupies only part of the frame and
-the scene has strong natural color bias. The color-cast metric treats average
-channel imbalance as a white-balance problem even when the color is natural.
-In the emulator App run the overall score is acceptable, but the diagnosis still
-flags color cast as the main issue.
+- Sharpness: 51
+- Exposure: 95
+- Contrast: 67
+- Color cast: 37
+- Overall: 65
+- Match: Yes
 
-Possible improvement:
+What improved:
 
-Use subject-aware or region-weighted sharpness, and make color-cast scoring less
-aggressive for strongly colored natural scenes.
+The local-block Laplacian score gives more weight to the sharp subject/detail
+regions, so this clear natural sample no longer sits in the 30-40 sharpness
+band. This is the main reason for the Sharpness-Calibrate change.
 
-## Counterexample 3: High-ISO Noise Scored As Good
+Remaining limitation:
+
+The color-cast metric still treats some natural color imbalance as a possible
+white-balance issue. Exact UI screenshots should be recaptured because the
+existing emulator screenshot predates this recalculation.
+
+## Counterexample 2: High-ISO Noise Scored As Good
 
 Sample: `samples/noisy/noisy_nind_keyboard_03.jpg`
 
 Manual judgment: high-ISO noise sample.
 
-App scoring-log result:
+Recalculated Sharpness-Calibrate scoring-log result:
 
-- Sharpness: 80
+- Sharpness: 88
 - Exposure: 78
 - Contrast: 81
 - Color cast: 98
-- Overall: 82
+- Overall: 85
 - Match: No
 
 Failure reason:
 
-The app does not have a dedicated noise metric. Texture and noise can raise the
-high-frequency response used by the sharpness metric, causing a noisy image to
+The app does not have a dedicated noise metric. Texture and noise can raise
+both local Laplacian and Sobel/Tenengrad responses, causing a noisy image to
 look sharper to the algorithm.
 
 Possible improvement:
@@ -86,25 +93,26 @@ Possible improvement:
 Add a noise estimate on flat regions and combine it with sharpness so noise does
 not falsely improve perceived detail.
 
-## Counterexample 4: Artistic Night Bokeh Penalized
+## Counterexample 3: Artistic Night Bokeh Penalized
 
 Sample: `samples/counterexamples/counterexample_bokeh_01.jpg`
 
 Manual judgment: intentional night bokeh, human-acceptable.
 
-App scoring-log result:
+Recalculated Sharpness-Calibrate scoring-log result:
 
-- Sharpness: 1
+- Sharpness: 6
 - Exposure: 0
 - Contrast: 53
 - Color cast: 80
-- Overall: 23
+- Overall: 25
 - Match: No
 
 Failure reason:
 
 The algorithm sees blur and dark pixels but does not understand that the bokeh
-and low-light mood are intentional. It has no scene-intent or subject model.
+and low-light mood are intentional. The local-block upgrade does not solve
+scene intent or artistic blur.
 
 Possible improvement:
 

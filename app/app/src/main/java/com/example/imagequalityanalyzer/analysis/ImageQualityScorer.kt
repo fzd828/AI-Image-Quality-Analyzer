@@ -14,7 +14,7 @@ data class QualityResult(
 
 object ImageQualityScorer {
     fun score(metrics: QualityMetrics): QualityResult {
-        val sharpnessScore = sharpnessScore(metrics.laplacianVariance)
+        val sharpnessScore = sharpnessScore(metrics)
         val exposureScore = exposureScore(metrics)
         val contrastScore = contrastScore(metrics.contrastStdDev)
         val colorCastScore = colorCastScore(metrics.colorCastDistance)
@@ -42,8 +42,28 @@ object ImageQualityScorer {
         )
     }
 
-    private fun sharpnessScore(laplacianVariance: Double): Int =
-        normalizedScore(laplacianVariance, laplacianVariance + SHARPNESS_HALF_SCORE)
+    private fun sharpnessScore(metrics: QualityMetrics): Int {
+        val focusedScore = normalizedSaturatingScore(
+            value = metrics.focusedLaplacianVariance,
+            halfScoreValue = FOCUSED_LAPLACIAN_HALF_SCORE
+        )
+        val globalScore = normalizedSaturatingScore(
+            value = metrics.laplacianVariance,
+            halfScoreValue = GLOBAL_LAPLACIAN_HALF_SCORE
+        )
+        val tenengradScore = normalizedSaturatingScore(
+            value = metrics.tenengrad,
+            halfScoreValue = TENENGRAD_HALF_SCORE
+        )
+
+        // Tenengrad is useful edge-energy evidence, but noise and dense texture can lift it.
+        // Keep it as a low-weight auxiliary signal rather than letting it dominate sharpness.
+        return (
+            focusedScore * FOCUSED_LAPLACIAN_WEIGHT +
+                globalScore * GLOBAL_LAPLACIAN_WEIGHT +
+                tenengradScore * TENENGRAD_WEIGHT
+            ).roundToInt().coerceIn(SCORE_MIN, SCORE_MAX)
+    }
 
     private fun exposureScore(metrics: QualityMetrics): Int {
         val brightnessPenalty = abs(metrics.meanLuminance - IDEAL_LUMINANCE) / IDEAL_LUMINANCE *
@@ -78,12 +98,24 @@ object ImageQualityScorer {
         return (value / target * SCORE_MAX).roundToInt().coerceIn(SCORE_MIN, SCORE_MAX)
     }
 
+    private fun normalizedSaturatingScore(value: Double, halfScoreValue: Double): Int {
+        if (halfScoreValue <= 0.0) {
+            return SCORE_MIN
+        }
+        return (value / (value + halfScoreValue) * SCORE_MAX).roundToInt().coerceIn(SCORE_MIN, SCORE_MAX)
+    }
+
     private fun scoreFromPenalty(penalty: Double): Int =
         (SCORE_MAX - penalty).roundToInt().coerceIn(SCORE_MIN, SCORE_MAX)
 
     private const val SCORE_MIN = 0
     private const val SCORE_MAX = 100
-    private const val SHARPNESS_HALF_SCORE = 400.0
+    private const val FOCUSED_LAPLACIAN_WEIGHT = 0.60
+    private const val GLOBAL_LAPLACIAN_WEIGHT = 0.25
+    private const val TENENGRAD_WEIGHT = 0.15
+    private const val FOCUSED_LAPLACIAN_HALF_SCORE = 150.0
+    private const val GLOBAL_LAPLACIAN_HALF_SCORE = 400.0
+    private const val TENENGRAD_HALF_SCORE = 4_000.0
     private const val IDEAL_LUMINANCE = 128.0
     private const val BRIGHTNESS_PENALTY_WEIGHT = 35.0
     private const val CLIPPING_PENALTY_WEIGHT = 127.0
