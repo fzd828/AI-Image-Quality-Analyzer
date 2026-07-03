@@ -83,6 +83,9 @@ The noisy screenshots are especially useful because they show a limitation:
 without a dedicated noise metric, high-frequency noise and texture can raise
 sharpness and edge responses. The keyboard sample is therefore a clear
 counterexample: the human label is noisy, but the App gives it 87/100.
+Diagnosis Explanation V2 adds conservative texture/noise risk wording for this
+kind of case, but it does not change the score, add an independent noise
+metric, or make the existing screenshots new evidence for noise detection.
 
 ## Full Validation Log Summary
 

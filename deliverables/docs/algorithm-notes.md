@@ -101,6 +101,15 @@ overall = 0.35 * sharpness
 
 The formula should be adjusted only after validation evidence shows a clear reason.
 
+## Diagnosis Explanation Layer
+
+Diagnosis Explanation V2 changes only the result text layer. It can now list up
+to three weak dimensions in severity order, distinguish underexposure from
+overexposure, and add a conservative texture/noise risk sentence when very high
+edge response appears together with dark or low-exposure conditions.
+
+当前诊断层增加了保守的噪声/纹理风险提示，但没有新增独立噪声检测指标，因此 noisy 样本仍属于算法局限展示。
+
 ## Performance And Large Images
 
 The app records analysis time for each image.
