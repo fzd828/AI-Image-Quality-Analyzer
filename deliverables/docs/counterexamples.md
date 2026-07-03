@@ -73,20 +73,22 @@ Sample: `samples/noisy/noisy_nind_keyboard_03.jpg`
 
 Manual judgment: high-ISO noise sample.
 
-Recalculated Sharpness-Calibrate scoring-log result:
+Current emulator App UI result:
 
-- Sharpness: 88
-- Exposure: 78
-- Contrast: 81
+- Sharpness: 96
+- Exposure: 71
+- Contrast: 89
 - Color cast: 98
-- Overall: 85
+- Overall: 87
 - Match: No
 
 Failure reason:
 
 The app does not have a dedicated noise metric. Texture and noise can raise
 both local Laplacian and Sobel/Tenengrad responses, causing a noisy image to
-look sharper to the algorithm.
+look sharper to the algorithm. The current screenshot is
+`screenshots/emulator_noisy_nind_keyboard_result.png`; it is Android Emulator
+evidence, not Redmi K70E true-device evidence.
 
 Possible improvement:
 

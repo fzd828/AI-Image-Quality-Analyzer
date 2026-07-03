@@ -68,7 +68,7 @@ Recommended batching:
 - WS3: completed and committed as `a028db2 feat: add image quality metrics engine`; memory optimization committed as `f2ba977 perf: stream laplacian variance calculation`.
 - WS4: completed and committed as `d3b2d57 feat: add scoring result ui`; scroll/inset fix committed as `ad853b3 fix: add result screen scroll insets`.
 - WS5: completed and committed as `bbfa008 docs: prepare redmi k70e sample set`. Current samples are documented Wikimedia/open-license comparison samples; Redmi K70E self-shot samples remain optional follow-up evidence.
-- WS6: completed and committed through `935603f docs: add validation evidence run`, `726333b fix: support photo picker image decoding`, and `8e57d7c docs: add emulator validation evidence`. Emulator screenshots and 21-row analysis log exist; Redmi K70E true-device screenshots and timing remain pending follow-up evidence.
+- WS6: completed and committed through `935603f docs: add validation evidence run`, `726333b fix: support photo picker image decoding`, and `8e57d7c docs: add emulator validation evidence`. The current screenshot folder now keeps three current localized Android Emulator noisy-sample result screenshots, and `logs/analysis_log.csv` records all 21 samples. Older pre-calibration emulator screenshots were removed and should be recaptured only if needed for final packaging. Redmi K70E true-device screenshots and timing remain pending follow-up evidence.
 - WS7: should now finalize reviewer-facing documentation using the WS5/WS6 evidence and clearly preserve the emulator-vs-Redmi evidence boundary.
 - WS8: blocked until WS7 completes, then owns final APK copy, structured ZIP, and final checklist.
 

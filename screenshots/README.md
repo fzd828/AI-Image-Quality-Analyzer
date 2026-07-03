@@ -1,32 +1,33 @@
 # Screenshot Evidence Inventory
 
-This folder contains Android Emulator screenshots captured during WS6 follow-up.
-They are App UI evidence from `Medium_Phone` on Android API 36.1. They are not
-Redmi K70E true-device screenshots.
+This folder contains Android Emulator screenshots captured from the current
+localized App UI on `Medium_Phone` / Android API 36.1.
 
-## Captured Emulator Evidence
+These screenshots are emulator evidence, not Redmi K70E true-device evidence.
+The older pre-calibration screenshots were removed before this recapture pass,
+so final documentation should reference only the files that currently exist.
+
+## Current Emulator Evidence
+
+| Screenshot | Sample | Device | Mode | Status | Notes |
+|---|---|---|---|---|---|
+| `emulator_noisy_hong_kong_night_result.png` | `samples/noisy/noisy_hong_kong_night_01.jpg` | Android Emulator `Medium_Phone`, API 36.1 | Fine mode 2560 | Captured | Noisy night sample result, overall 67/100. |
+| `emulator_noisy_nind_keyboard_result.png` | `samples/noisy/noisy_nind_keyboard_03.jpg` | Android Emulator `Medium_Phone`, API 36.1 | Fine mode 2560 | Captured | High-ISO keyboard noise sample result, overall 87/100. |
+| `emulator_noisy_nind_stefantiek_result.png` | `samples/noisy/noisy_nind_stefantiek_02.jpg` | Android Emulator `Medium_Phone`, API 36.1 | Fine mode 2560 | Captured | NIND noisy portrait/detail sample result, overall 78/100. |
+
+## Emulator Evidence To Recapture If Needed
+
+These screenshots existed in an older pass but were intentionally removed
+because they predated the current scoring/UI state. Recapture them from the
+current App before final packaging if reviewer-facing screenshots are needed.
 
 | Screenshot | Sample | Device | Status | Notes |
 |---|---|---|---|---|
-| `emulator_app_start.png` | App launch screen | Android Emulator `Medium_Phone`, API 36.1 | Captured | Shows the initial `Select image` state. |
-| `emulator_clear_butterfly_jpeg_result.png` | `samples/clear/clear_butterfly_01.jpg` | Android Emulator `Medium_Phone`, API 36.1 | Captured | JPEG clear sample result, overall 60/100. |
-| `emulator_blur_out_of_focus_jpeg_result.png` | `samples/blur/blur_out_of_focus_03.jpg` | Android Emulator `Medium_Phone`, API 36.1 | Captured | Blur sample result, overall 42/100. |
-| `emulator_format_clear_png_result.png` | `samples/formats/format_clear_png_01.png` | Android Emulator `Medium_Phone`, API 36.1 | Captured | PNG format sample result, overall 60/100. |
-| `emulator_format_clear_webp_result.png` | `samples/formats/format_clear_webp_01.webp` | Android Emulator `Medium_Phone`, API 36.1 | Captured | WebP format sample result, overall 59/100. |
-
-## Simplified Chinese Emulator UI Evidence
-
-These screenshots were captured after the App UI text was localized to
-Simplified Chinese. They are Android Emulator evidence, not Redmi K70E
-true-device evidence.
-
-| Screenshot | Sample | Device | Status | Notes |
-|---|---|---|---|---|
-| `模拟器_简体中文_应用启动页.png` | App launch screen | Android Emulator `Medium_Phone`, API 36.1 | Captured | Shows the localized initial state. |
-| `模拟器_简体中文_清晰蝴蝶_JPEG_分析结果.png` | `samples/clear/clear_butterfly_01.jpg` | Android Emulator `Medium_Phone`, API 36.1 | Captured | Localized JPEG clear sample result. |
-| `模拟器_简体中文_失焦模糊_JPEG_分析结果.png` | `samples/blur/blur_out_of_focus_03.jpg` | Android Emulator `Medium_Phone`, API 36.1 | Captured | Localized blur sample result. |
-| `模拟器_简体中文_PNG格式清晰样本_分析结果.png` | `samples/formats/format_clear_png_01.png` | Android Emulator `Medium_Phone`, API 36.1 | Captured | Localized PNG format sample result. |
-| `模拟器_简体中文_WebP格式清晰样本_分析结果.png` | `samples/formats/format_clear_webp_01.webp` | Android Emulator `Medium_Phone`, API 36.1 | Captured | Localized WebP format sample result. |
+| `emulator_app_start.png` | App launch screen | Android Emulator `Medium_Phone`, API 36.1 | Pending recapture | Current localized launch screen. |
+| `emulator_clear_butterfly_jpeg_result.png` | `samples/clear/clear_butterfly_01.jpg` | Android Emulator `Medium_Phone`, API 36.1 | Pending recapture | Representative clear-image run. |
+| `emulator_blur_out_of_focus_jpeg_result.png` | `samples/blur/blur_out_of_focus_03.jpg` | Android Emulator `Medium_Phone`, API 36.1 | Pending recapture | Representative blur run. |
+| `emulator_format_clear_png_result.png` | `samples/formats/format_clear_png_01.png` | Android Emulator `Medium_Phone`, API 36.1 | Pending recapture | PNG picker/load/analyze flow. |
+| `emulator_format_clear_webp_result.png` | `samples/formats/format_clear_webp_01.webp` | Android Emulator `Medium_Phone`, API 36.1 | Pending recapture | WebP picker/load/analyze flow. |
 
 ## Pending Redmi K70E Evidence
 
@@ -40,6 +41,9 @@ Wikimedia evidence as Redmi K70E evidence.
 | `redmi_clear_butterfly_01_result.png` | `samples/clear/clear_butterfly_01.jpg` | Redmi K70E | Pending manual capture | Representative clear-image run. |
 | `redmi_blur_out_of_focus_03_result.png` | `samples/blur/blur_out_of_focus_03.jpg` | Redmi K70E | Pending manual capture | Representative blur run. |
 | `redmi_overexposed_photo_01_result.png` | `samples/overexposed/overexposed_photo_01.jpg` | Redmi K70E | Pending manual capture | Representative exposure-warning run. |
+| `redmi_noisy_hong_kong_night_result.png` | `samples/noisy/noisy_hong_kong_night_01.jpg` | Redmi K70E | Pending manual capture | Representative noisy-night run. |
+| `redmi_noisy_nind_keyboard_result.png` | `samples/noisy/noisy_nind_keyboard_03.jpg` | Redmi K70E | Pending manual capture | Representative high-ISO noise run. |
+| `redmi_noisy_nind_stefantiek_result.png` | `samples/noisy/noisy_nind_stefantiek_02.jpg` | Redmi K70E | Pending manual capture | Representative NIND noisy sample run. |
 | `redmi_format_clear_png_01_result.png` | `samples/formats/format_clear_png_01.png` | Redmi K70E | Pending manual capture | Confirms PNG picker/load/analyze flow on phone. |
 | `redmi_format_clear_webp_01_result.png` | `samples/formats/format_clear_webp_01.webp` | Redmi K70E | Pending manual capture | Confirms WebP picker/load/analyze flow on phone. |
 | `redmi_counterexample_bokeh_01_result.png` | `samples/counterexamples/counterexample_bokeh_01.jpg` | Redmi K70E | Pending manual capture | Shows an intentional counterexample in the App UI. |
