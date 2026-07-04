@@ -37,7 +37,7 @@ Recommended batching:
 - Completed code batch: WS1, WS2, WS3, and WS4.
 - Completed evidence batch: WS5 sample set and WS6 final validation evidence through `1153675`.
 - Completed documentation batch: WS7 contest documentation finalization.
-- Next batch: WS8 final ZIP package.
+- Completed final packaging batch: WS8 final ZIP package.
 
 | ID | Name | Can Start When | Main Output |
 |---|---|---|---|
@@ -70,7 +70,7 @@ Recommended batching:
 - WS5: completed and committed as `bbfa008 docs: prepare redmi k70e sample set`. Current samples are documented Wikimedia/NIND/NASA external or public samples plus derived format samples; Redmi K70E is a representative validation device, not the source of all samples.
 - WS6: completed through `935603f docs: add validation evidence run`, `726333b fix: support photo picker image decoding`, `8e57d7c docs: add emulator validation evidence`, `70afe92 docs: update noisy emulator evidence`, and `1153675 docs: refresh final validation evidence`. `logs/final_validation_log.csv` is the final structured record with 32 rows: 22 Android Emulator records and 10 Redmi K70E representative true-device records. `logs/analysis_log.csv` is historical and should not be cited as final evidence.
 - WS7: completed by the final contest documentation pass. It updates `deliverables/`, `screenshots/README.md`, OpenSpec task status, and this workstream map without changing app code, samples, screenshots, or final logs.
-- WS8: not started. It begins after WS7 and owns final APK copy, structured ZIP, package naming, and final checklist.
+- WS8: completed by the final packaging pass. It owns the final APK copy, structured ZIP, package naming, and final checklist. GitHub publication remains intentionally deferred because the structured ZIP is the primary submission.
 
 ## Conversation Count Recommendation
 
@@ -78,9 +78,9 @@ WS1-WS4 are complete and should not keep producing code.
 
 From the current state, create or continue conversations in this order:
 
-1. Next: create WS8 for final APK and ZIP packaging.
-2. During WS8: keep app business logic frozen unless final packaging reveals a blocking build issue.
-3. Optional before WS8 final self-review: run a full Redmi K70E all-sample sweep only if extra time is available. Current final evidence already includes representative Redmi K70E screenshots.
+1. WS8 final ZIP packaging is complete.
+2. Keep app business logic frozen unless a future packaging or review pass reveals a blocking build issue.
+3. Optional future work after ZIP completion: publish to GitHub or run a full Redmi K70E all-sample sweep if extra time remains. Current final evidence already includes representative Redmi K70E screenshots.
 
 If you want fewer conversations, merge these pairs:
 

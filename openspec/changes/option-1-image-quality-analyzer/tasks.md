@@ -37,9 +37,10 @@ These packages are the canonical execution units for future conversations.
   - Depends on WS0 for drafts; final pass depends on WS6.
   - Completes README, algorithm notes, AI collaboration, constraints, and scoring alignment.
   - Current status: completed by the contest documentation finalization pass; WS8 remains separate.
-- [ ] **WS8 - Final ZIP Submission Package（最终 ZIP 提交包）**
+- [x] **WS8 - Final ZIP Submission Package（最终 ZIP 提交包）**
   - Depends on WS6 and WS7.
   - Builds final APK and structured ZIP. GitHub is optional only after ZIP completion.
+  - Current status: completed by final packaging pass. Primary submission is `武汉-AI画质分析-袁嘉乐.zip`; GitHub publication was intentionally not performed.
 
 Detailed package briefs live under `docs/superpowers/task-packets/`.
 
@@ -92,10 +93,10 @@ Detailed package briefs live under `docs/superpowers/task-packets/`.
 
 ## Phase 5 - Final Package
 
-- [ ] Build APK.
-- [ ] Verify install and run on real device or emulator.
-- [ ] Check package naming rule.
-- [ ] Ensure all required evidence is included.
-- [ ] Create structured ZIP package as the primary submission.
-- [ ] Publish to GitHub only if time remains after ZIP package completion.
-- [ ] Final self-review against judging rubric.
+- [x] Build APK.
+- [x] Verify install and run on real device or emulator.
+- [x] Check package naming rule.
+- [x] Ensure all required evidence is included.
+- [x] Create structured ZIP package as the primary submission.
+- [x] Publish to GitHub only if time remains after ZIP package completion. Not published in this pass because the final ZIP is the required primary submission and the user explicitly deferred GitHub.
+- [x] Final self-review against judging rubric.
