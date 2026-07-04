@@ -1,157 +1,112 @@
-# Validation Evidence
+# 验证证据
 
-## Evidence Status
+本文记录最终版 App 的验证证据。完整逐样本结构化记录见 `logs/final_validation_log.csv`，截图清单见 `screenshots/README.md`。
 
-This validation pass uses the current `samples/` folder from WS5. The available
-sample set contains documented Wikimedia Commons images and format copies
-derived from those images. These are external comparison samples, not Redmi
-K70E self-shot images.
+## 证据文件
 
-Current evidence files:
+- `logs/final_validation_log.csv`：最终验证日志，包含设备、样本路径、格式、来源、人工判断、分析模式、原始尺寸、分析尺寸、是否降采样、分析耗时、四项子分、综合分、匹配状态、局限说明、截图文件名。
+- `screenshots/README.md`：最终截图索引，按 `模拟器/` 和 `红米K70E/` 分开列出。
+- `screenshots/模拟器/`：Android Emulator `Medium_Phone` / Android API 36.1 的最终截图。
+- `screenshots/红米K70E/`：Redmi K70E 真机截图。真机无法稳定长截图时，预览页和结果页拆成两张截图保存。
 
-- `logs/analysis_log.csv`: 21-row structured validation log for every current
-  JPEG, PNG, and WebP sample.
-- `screenshots/README.md`: screenshot inventory and pending recapture list.
-- `screenshots/emulator_noisy_hong_kong_night_result.png`: current App UI
-  result for `samples/noisy/noisy_hong_kong_night_01.jpg`.
-- `screenshots/emulator_noisy_nind_keyboard_result.png`: current App UI result
-  for `samples/noisy/noisy_nind_keyboard_03.jpg`.
-- `screenshots/emulator_noisy_nind_stefantiek_result.png`: current App UI
-  result for `samples/noisy/noisy_nind_stefantiek_02.jpg`.
+## 设备与边界
 
-The screenshots above were captured from Android Emulator `Medium_Phone`,
-Android API 36.1, using the localized App UI and fine analysis mode 2560. They
-are useful App-run evidence, but they are not Redmi K70E true-device evidence.
+本轮证据明确区分运行设备和样本来源：
 
-Older pre-calibration screenshots for launch, clear, blur, PNG, and WebP runs
-were intentionally removed before this recapture pass. Those samples still have
-structured score-log rows, but their reviewer-facing UI screenshots should be
-recaptured from the current App before final packaging if needed.
+- 模拟器证据：来自 Android Emulator `Medium_Phone`，Android API 36.1。
+- 真机证据：来自 Redmi K70E。
+- 样本来源：多数样本来自 Wikimedia Commons 或 NIND 等外部样本集；它们不是 Redmi K70E 自拍样本。
+- Redmi JPEG 格式截图：该条是手机截图/保存流程生成的 JPEG 副本，App 显示尺寸为 `1364 x 1024`，只用于证明 Redmi 端 JPEG 可选取、预览和分析；它不作为 repo 原始 `samples/formats/format_clear_jpeg_01.jpg` 的同图跨设备对比。
 
-Evidence still pending:
+除启动页外，最终验证统一使用 App 内 `精细模式 2560`。
 
-- Redmi K70E self-shot originals and derived samples.
-- Redmi K70E real-device App screenshots.
-- Redmi K70E manual App timing measurements.
-- Current App UI screenshots for clear, blur, overexposed, underexposed,
-  counterexample, PNG, and WebP representative samples.
+## 样本覆盖
 
-## Sharpness Calibration Update
+比赛要求“清晰 / 模糊 / 过曝 / 欠曝 / 噪点等各 2-3 张，并给出评分结果与人工判断的对比”。当前完整样本覆盖由模拟器完成，Redmi K70E 作为真机代表验证补充。
 
-The original sharpness score used only global Laplacian variance. Validation
-showed that clear natural images could be under-scored when the sharp subject
-occupied only part of the frame, while texture/noise and high-frequency
-background detail could over-score blur/noise samples. The current score uses
-local-block Laplacian as the primary signal, keeps global Laplacian as a
-secondary signal, and uses Tenengrad/Sobel as a low-weight auxiliary signal.
+| 类别 | 模拟器截图 | Redmi K70E 截图 | 说明 |
+|---|---:|---:|---|
+| 清晰 | 3 | 1 | 满足 2-3 张样本要求；真机补充 1 张代表样本。 |
+| 模糊 | 3 | 1 | 满足 2-3 张样本要求。 |
+| 过曝 | 3 | 1 | 满足 2-3 张样本要求；最终反例包含 1 张过曝样本。 |
+| 欠曝 | 3 | 1 | 满足 2-3 张样本要求。 |
+| 噪点 | 3 | 1 | 满足 2-3 张样本要求；最终反例包含 1 张噪点夜景样本。 |
+| 格式 JPEG / PNG / WebP | 3 | 3 | 证明三种核心格式可选取、预览和分析。 |
+| 反例 | 2 个最终采用 | 2 个真机复现 | 最终采用 `overexposed_sky_02` 和 `noisy_hong_kong_night_01`。 |
+| 大图 | 1 | 1 | 验证大图安全缩放和分析流程。 |
 
-Key recalculated score changes:
+噪点类别不需要再强制补 Redmi 第二张：样本层面已有 3 张噪点结果；Redmi 的 1 张噪点是额外真机运行证据。如果后续想强化真机证据，可以再补 `noisy_nind_keyboard_03.jpg` 或 `noisy_nind_stefantiek_02.jpg`，但它不是满足比赛样本数量的硬性缺口。
 
-| Sample | Manual judgment | Sharpness before | Sharpness after | Overall before | Overall after | Interpretation |
-|---|---|---:|---:|---:|---:|---|
-| `clear/clear_butterfly_01.jpg` | Clear subject | 36 | 51 | 60 | 65 | Improved; no longer trapped in the 30-40 sharpness band. |
-| `clear/clear_beetle_spider_02.jpg` | Clear macro/detail | 38 | 67 | 65 | 75 | Improved; local detail is now recognized. |
-| `clear/clear_butterfly_03.jpg` | Clear focused subject | 53 | 76 | 71 | 79 | Improved; focused regions lift sharpness. |
-| `blur/blur_out_of_focus_03.jpg` | Out-of-focus | 0 | 2 | 42 | 43 | Still low, as desired. |
-| `blur/blur_subway_motion_01.jpg` | Motion blur | 80 | 90 | 87 | 90 | Still a counterexample; station texture/detail remains high. |
-| `noisy/noisy_nind_keyboard_03.jpg` | High-ISO noise | 80 | 96 in current fine-mode UI | 82 | 87 in current fine-mode UI | Still a counterexample; noise/texture lifts edge metrics. |
+## 最终反例
 
-## Sample Coverage
+最终采用两个反例，详见 `deliverables/docs/counterexamples.md`：
 
-| Category | Current files | Source | Current emulator App screenshots | Redmi K70E evidence |
-|---|---:|---|---|---|
-| Clear | 3 | Wikimedia external samples | Pending recapture | Pending |
-| Blur | 3 | Wikimedia external samples | Pending recapture | Pending |
-| Overexposed | 3 | Wikimedia external samples | Pending recapture | Pending |
-| Underexposed | 3 | Wikimedia external samples | Pending recapture | Pending |
-| Noisy | 3 | Wikimedia external samples | 3 captured | Pending |
-| Counterexamples | 3 | Wikimedia external samples | Pending recapture | Pending |
-| Formats | 3 | Wikimedia-derived JPEG/PNG/WebP copies | Pending recapture for current UI | Pending |
+| 反例 | 人工判断 | App 关键结果 | 为什么选它 |
+|---|---|---|---|
+| `samples/overexposed/overexposed_sky_02.jpg` | 天空和地面高亮区域明显偏白，存在局部过曝。 | 综合分 80/100，曝光 42/100，但清晰度 95、对比度 100、偏色 95。 | App 发现过曝风险，但综合分仍偏高，说明曝光问题被其他高分项稀释。 |
+| `samples/noisy/noisy_hong_kong_night_01.jpg` | 夜景暗部和纹理区域噪点明显。 | 综合分 67/100，清晰度 93/100，对比度 100/100。 | 噪点和霓虹/建筑边缘被当成高频细节，说明缺少独立噪点指标。 |
 
-Full source, author, license, preparation, manual judgment, and expected App
-behavior are recorded in `samples/SOURCES.md`.
+这两个反例比运动模糊、艺术散景等样本更适合最终说明，因为它们更少依赖审美争议，截图中问题也更容易看懂。
 
-## Current Emulator App Run Summary
+## 模拟器完整验证摘要
 
-| Sample | Source | Manual judgment | Format | Mode | Analysis size | Time | Overall | Match | Screenshot |
-|---|---|---|---|---|---|---:|---:|---|---|
-| `noisy/noisy_hong_kong_night_01.jpg` | Wikimedia external | Night image with visible noise | JPEG | Fine 2560 | 1920 x 1258 | 188 ms | 67 | Partial | `screenshots/emulator_noisy_hong_kong_night_result.png` |
-| `noisy/noisy_nind_keyboard_03.jpg` | Wikimedia external | High-ISO noise sample | JPEG | Fine 2560 | 1920 x 1272 | 145 ms | 87 | No | `screenshots/emulator_noisy_nind_keyboard_result.png` |
-| `noisy/noisy_nind_stefantiek_02.jpg` | Wikimedia external | Natural Image Noise Dataset sample | JPEG | Fine 2560 | 1358 x 2560 | 248 ms | 78 | Partial | `screenshots/emulator_noisy_nind_stefantiek_result.png` |
+| 样本 | 人工判断 | 综合分 | 匹配状态 | 主要说明 |
+|---|---|---:|---|---|
+| `samples/clear/clear_butterfly_01.jpg` | 清晰，颜色偏暖 | 69 | Partial | 可用但提示偏色风险。 |
+| `samples/clear/clear_beetle_spider_02.jpg` | 主体纹理清晰 | 79 | Match | 高分符合人工判断。 |
+| `samples/clear/clear_butterfly_03.jpg` | 主体清晰，色彩偏暖 | 82 | Partial | 高分合理，偏色需人工说明。 |
+| `samples/blur/blur_out_of_focus_03.jpg` | 明显失焦 | 42 | Match | 清晰度仅 1/100。 |
+| `samples/blur/blur_subway_motion_01.jpg` | 运动模糊但有强边缘 | 90 | Mismatch | 高对比和局部边缘导致过高分，作为局限样本保留。 |
+| `samples/blur/blur_tanoura_motion_02.jpg` | 夜间长曝光运动模糊 | 39 | Match | 曝光和综合分均较低。 |
+| `samples/overexposed/overexposed_photo_01.jpg` | 高亮区域偏多 | 50 | Match | App 识别过曝和清晰度风险。 |
+| `samples/overexposed/overexposed_sky_02.jpg` | 天空局部过曝 | 80 | Partial | 最终反例：诊断发现过曝，但综合分仍偏高。 |
+| `samples/overexposed/overexposed_space_washed_03.jpg` | 明显偏亮/冲洗感 | 43 | Match | 曝光分为 0。 |
+| `samples/underexposed/underexposed_sun_01.jpg` | 暗部占比高 | 30 | Match | 欠曝和低清晰度风险明显。 |
+| `samples/underexposed/underexposed_space_02.jpg` | 暗绿低对比场景 | 41 | Partial | 低对比被识别，曝光项不完全等同人工观感。 |
+| `samples/underexposed/underexposed_pollen_03.jpg` | 暗背景欠曝 | 34 | Match | 曝光分为 0。 |
+| `samples/noisy/noisy_hong_kong_night_01.jpg` | 夜景噪点明显 | 67 | Partial | 最终反例：清晰度和对比度偏高，噪点没有独立扣分。 |
+| `samples/noisy/noisy_nind_stefantiek_02.jpg` | 高 ISO 噪点，细节较多 | 78 | Partial | 总分偏高，噪点未被强惩罚。 |
+| `samples/noisy/noisy_nind_keyboard_03.jpg` | 高 ISO 键盘噪点 | 87 | Mismatch | 噪点和硬边缘抬高清晰度，作为局限样本保留。 |
+| `samples/formats/format_clear_jpeg_01.jpg` | JPEG 兼容样本 | 69 | Match | JPEG 可选取、预览、分析。 |
+| `samples/formats/format_clear_png_01.png` | PNG 兼容样本 | 69 | Match | PNG 可选取、预览、分析。 |
+| `samples/formats/format_clear_webp_01.webp` | WebP 兼容样本 | 68 | Match | WebP 可选取、预览、分析。 |
+| `samples/counterexamples/counterexample_bokeh_01.jpg` | 有意低光散景，人眼可接受 | 24 | Mismatch | 涉及艺术意图，作为局限样本保留。 |
+| `samples/counterexamples/counterexample_colored_lights_02.jpg` | 彩色灯光场景 | 49 | Partial | 特殊灯光和偏色影响评分。 |
+| `samples/counterexamples/counterexample_sunset_03.jpg` | 暖色日落，观感较好 | 87 | Match | App 高分，仍需说明暖色场景不能只靠偏色判断。 |
+| `samples/large/large_blue_marble_january_01.jpg` | 大图安全缩放验证 | 65 | Match | 从 `5400 x 2700` 缩放到 `2560 x 1280` 后完成分析。 |
 
-The noisy screenshots are especially useful because they show a limitation:
-without a dedicated noise metric, high-frequency noise and texture can raise
-sharpness and edge responses. The keyboard sample is therefore a clear
-counterexample: the human label is noisy, but the App gives it 87/100.
-Diagnosis Explanation V2 adds conservative texture/noise risk wording for this
-kind of case, but it does not change the score, add an independent noise
-metric, or make the existing screenshots new evidence for noise detection.
+## Redmi K70E 真机验证摘要
 
-## Full Validation Log Summary
+| 样本或来源 | 人工判断 | 综合分 | 匹配状态 | 主要说明 |
+|---|---|---:|---|---|
+| `samples/clear/clear_butterfly_03.jpg` | 主体清晰，色彩偏暖 | 82 | Partial | 真机结果与模拟器一致。 |
+| `samples/blur/blur_tanoura_motion_02.jpg` | 夜间长曝光运动模糊 | 39 | Match | 真机结果与模拟器一致。 |
+| `samples/overexposed/overexposed_sky_02.jpg` | 天空局部过曝 | 80 | Partial | 真机复现最终反例：局部高光问题仍被总分弱化。 |
+| `samples/underexposed/underexposed_sun_01.jpg` | 暗部占比高 | 30 | Match | 真机结果与模拟器一致。 |
+| `samples/noisy/noisy_hong_kong_night_01.jpg` | 夜景噪点明显 | 67 | Partial | 真机复现最终反例：噪点样本清晰度偏高。 |
+| 手机截图生成 JPEG 副本 | JPEG 兼容性样本 | 69 | Partial | 尺寸为 `1364 x 1024`，不作为 repo 原始 JPEG 同图对比。 |
+| `samples/formats/format_clear_png_01.png` | PNG 兼容样本 | 69 | Match | 真机 PNG 可选取、预览、分析。 |
+| `samples/formats/format_clear_webp_01.webp` | WebP 兼容样本 | 68 | Match | 真机 WebP 可选取、预览、分析。 |
+| `samples/counterexamples/counterexample_sunset_03.jpg` | 暖色日落，观感较好 | 87 | Match | 真机结果与模拟器一致。 |
+| `samples/large/large_blue_marble_january_01.jpg` | 大图安全缩放验证 | 65 | Match | 真机完成大图缩放和分析。 |
 
-| Sample | Source | Manual judgment | Overall | Match | Notes |
-|---|---|---|---:|---|---|
-| `blur/blur_out_of_focus_03.jpg` | Wikimedia external | Out-of-focus image | 43 | Yes | Recalculated sharpness remains very low; current UI screenshot pending recapture. |
-| `blur/blur_subway_motion_01.jpg` | Wikimedia external | Motion blur from moving train | 90 | No | Counterexample remains: high-frequency station detail keeps score high. |
-| `blur/blur_tanoura_motion_02.jpg` | Wikimedia external | Intentional motion blur | 37 | Yes | Overall remains low for visible blur. |
-| `clear/clear_beetle_spider_02.jpg` | Wikimedia external | Clear macro/detail image | 75 | Yes | Improved after local-block sharpness. |
-| `clear/clear_butterfly_01.jpg` | Wikimedia external | Clear, sharp subject, normal exposure | 65 | Yes | Improved sharpness; color-cast warning remains; current UI screenshot pending recapture. |
-| `clear/clear_butterfly_03.jpg` | Wikimedia external | Clear focused subject | 79 | Yes | Improved after local-block sharpness. |
-| `counterexamples/counterexample_bokeh_01.jpg` | Wikimedia external | Intentional night bokeh, human-acceptable | 25 | No | Intended failure: artistic blur/darkness is still treated as low quality. |
-| `counterexamples/counterexample_colored_lights_02.jpg` | Wikimedia external | Colored night lighting, human-acceptable | 47 | No | Intended failure: night lighting and color bias remain penalized. |
-| `counterexamples/counterexample_sunset_03.jpg` | Wikimedia external | Warm sunset light, human-acceptable | 85 | Partial | Overall is high, but warm color can still be described as cast. |
-| `formats/format_clear_jpeg_01.jpg` | Wikimedia-derived | JPEG format validation copy | 65 | Pending UI recapture | Offline replay ran; representative JPEG UI evidence should be recaptured if needed. |
-| `formats/format_clear_png_01.png` | Wikimedia-derived | PNG format validation copy | 65 | Pending UI recapture | Current UI screenshot pending recapture. |
-| `formats/format_clear_webp_01.webp` | Wikimedia-derived | WebP format validation copy | 65 | Pending UI recapture | Current UI screenshot pending recapture. |
-| `noisy/noisy_hong_kong_night_01.jpg` | Wikimedia external | Night image with visible noise | 67 | Partial | Current emulator App UI screenshot captured; score mainly reflects exposure penalty, not noise detection. |
-| `noisy/noisy_nind_keyboard_03.jpg` | Wikimedia external | High-ISO noise sample | 87 | No | Current emulator App UI screenshot captured; noise/texture still lifts sharpness and overall. |
-| `noisy/noisy_nind_stefantiek_02.jpg` | Wikimedia external | Natural Image Noise Dataset sample | 78 | Partial | Current emulator App UI screenshot captured; no dedicated noise metric. |
-| `overexposed/overexposed_photo_01.jpg` | Wikimedia external | Washed-out highlights | 50 | Yes | Exposure penalty keeps result weak. |
-| `overexposed/overexposed_sky_02.jpg` | Wikimedia external | Overexposed sky | 81 | Partial | Strong edges and contrast still keep overall high. |
-| `overexposed/overexposed_space_washed_03.jpg` | Wikimedia external | Washed-out overexposed space photograph | 40 | Yes | Exposure score drops to zero. |
-| `underexposed/underexposed_pollen_03.jpg` | Wikimedia external | Dark low-exposure image | 34 | Yes | Exposure score drops to zero. |
-| `underexposed/underexposed_space_02.jpg` | Wikimedia external | Underexposed space photograph | 39 | Yes | Overall is low, but exposure remains a metric limitation. |
-| `underexposed/underexposed_sun_01.jpg` | Wikimedia external | Very dark frame | 30 | Yes | Exposure score drops to zero. |
+## 人工判断与 App 评分对比结论
 
-For per-sample format, original size, analysis size, downsampling flag,
-analysis time, sharpness, exposure, contrast, color-cast, overall score, match,
-and detailed limitation notes, see `logs/analysis_log.csv`.
+整体上，App 对普通失焦、明显欠曝、明显过曝、大图缩放和格式兼容的判断较稳定；对局部过曝、夜景噪点、高纹理和特殊光线场景存在局限。
 
-## Screenshot Evidence
+主要匹配情况：
 
-Captured emulator screenshots are listed in `screenshots/README.md`.
+- 清晰样本通常得分较高，但自然色彩偏暖时会触发偏色风险。
+- 明显失焦和暗部占比高的样本通常得分较低。
+- JPEG、PNG、WebP 均已完成选取、预览和分析验证。
+- 大图样本能安全降采样到精细模式上限内完成分析。
 
-Representative screenshots still to capture or recapture:
+主要局限：
 
-- Current emulator App launch screen.
-- Current emulator clear sample result screen.
-- Current emulator blur sample result screen.
-- Current emulator PNG and WebP format result screens.
-- Current emulator counterexample result screen.
-- Redmi K70E App launch and representative result screens if the phone is
-  available before final packaging.
+- 局部过曝可能被清晰度、对比度等高分项稀释，导致综合分偏高。
+- 夜景噪点可能被边缘/纹理指标误当成清晰细节，导致清晰度和对比度偏高。
+- 运动模糊中的站台线条、高对比结构会抬高清晰度得分。
+- App 当前没有独立噪点分，因此噪点样本只能作为风险提示和反例说明，不能证明已经具备专业噪声检测能力。
+- 艺术散景、夜景氛围、暖色日落等主观审美场景无法只靠清晰度、曝光、对比、偏色四项指标完全判断。
 
-## Interpretation
-
-The validation run is useful because it shows both successful matches and
-important limitations:
-
-- The App can load and analyze Photo Picker or file-picker selected JPEG
-  samples on Android API 36.1 emulator.
-- Fine mode 2560 handles the noisy samples without OOM; the largest noisy
-  sample is safely downsampled from 1618 x 3050 to 1358 x 2560.
-- The recalibrated sharpness logic catches some blur cases, but it is still
-  vulnerable to high-frequency texture and noise.
-- Noisy samples remain weak evidence for a "noise detector" because the App has
-  no dedicated noise score. They should be discussed as a known limitation.
-- Global exposure can miss some underexposed-looking scenes when the histogram
-  does not cross the clipping thresholds.
-- Color-cast scoring can penalize legitimate warm or strongly colored scenes.
-
-## Redmi K70E Follow-Up
-
-When the Redmi K70E is available, run the installed App manually against the
-representative samples, capture the screenshots listed in
-`screenshots/README.md`, and update `logs/analysis_log.csv` or add a separate
-device log with real Android analysis times. Do not relabel Wikimedia samples
-or emulator screenshots as Redmi K70E samples.
+完整逐项数据以 `logs/final_validation_log.csv` 为准。

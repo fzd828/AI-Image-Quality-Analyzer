@@ -1,130 +1,109 @@
-# Counterexamples
+# 反例与局限分析
 
-This document records scoring failures and limitations found during the WS6
-validation evidence pass. The examples below use documented Wikimedia external
-samples from `samples/SOURCES.md`; they are not Redmi K70E self-shot images.
+本文记录最终采用的评分反例和算法局限。样本主要来自 Wikimedia Commons 和 NIND 等外部样本集，不是 Redmi K70E 自拍样本。完整结构化记录见 `logs/final_validation_log.csv`。
 
-## Counterexample 1: Motion Blur Scored Too High
+## 最终选定反例
 
-Sample: `samples/blur/blur_subway_motion_01.jpg`
+本项目最终选定 2 个反例：
 
-Manual judgment: motion blur from a moving train.
+1. `samples/overexposed/overexposed_sky_02.jpg`：过曝区域明显，但 App 综合分仍为 80/100。
+2. `samples/noisy/noisy_hong_kong_night_01.jpg`：夜景噪点明显，但 App 清晰度为 93/100、对比度为 100/100，综合分仍为 67/100。
 
-Recalculated Sharpness-Calibrate scoring-log result:
+这两个反例的共同优点是：肉眼判断和 App 分数之间的落差比较直观，不依赖复杂审美争议，也容易向评委解释。
 
-- Sharpness: 90
-- Exposure: 79
-- Contrast: 100
-- Color cast: 100
-- Overall: 90
-- Match: No
+## 反例 1：过曝区域明显但综合分偏高
 
-Failure reason:
+样本：`samples/overexposed/overexposed_sky_02.jpg`
 
-The image contains visible motion blur, but also has strong lines, edges, and
-station detail. The upgraded local Laplacian and Tenengrad signals still
-respond to those high-frequency structures, so the sharpness score stays high
-even though the human-visible subject motion is blurred.
+截图：`screenshots/模拟器/模拟器_最终_过曝_火车天空02_结果.png`
 
-Possible improvement:
+设备：Android Emulator `Medium_Phone` / API 36.1
 
-Use a blur metric that considers directional motion blur or compares local edge
-coherence, not only local/global edge strength.
+人工判断：天空和地面高亮区域明显偏白，存在局部过曝和高光裁剪风险；虽然火车主体仍可辨认，但整体评分不应过高。
 
-## Improved Case: Clear Image No Longer Penalized Mainly By Sharpness
+App 结果：
 
-Sample: `samples/clear/clear_butterfly_01.jpg`
+- 清晰度：95
+- 曝光：42
+- 对比度：100
+- 偏色：95
+- 综合评分：80
+- 匹配状态：Partial
 
-Manual judgment: clear, sharp subject, normal exposure.
+为什么这是反例：
 
-Previous emulator App UI result before Sharpness-Calibrate:
+App 的诊断文字已经指出“曝光偏亮/过曝，高亮区域裁剪像素较多”，说明它检测到了过曝风险。但综合评分仍然达到 80/100，原因是清晰度、对比度和偏色三项分数很高，把曝光问题稀释掉了。
 
-- Sharpness: 36
-- Exposure: 94
-- Contrast: 74
-- Color cast: 30
-- Overall: 60
-- Match: Partial
+这个反例说明：当前综合分对局部高光裁剪的惩罚不够强。当一张照片主体边缘很清楚、对比度很高时，即使存在明显过曝，总分仍可能偏乐观。
 
-Recalculated Sharpness-Calibrate result:
+可改进方向：
 
-- Sharpness: 51
-- Exposure: 95
-- Contrast: 67
-- Color cast: 37
-- Overall: 65
-- Match: Yes
+- 对高光裁剪比例设置更强的扣分权重。
+- 将“检测到明显过曝”作为综合分上限条件，例如过曝严重时限制最高分。
+- 区分“主体清晰”和“曝光质量”，避免清晰度过高掩盖曝光失败。
 
-What improved:
+## 反例 2：夜景噪点明显但清晰度/对比度偏高
 
-The local-block Laplacian score gives more weight to the sharp subject/detail
-regions, so this clear natural sample no longer sits in the 30-40 sharpness
-band. This is the main reason for the Sharpness-Calibrate change.
+样本：`samples/noisy/noisy_hong_kong_night_01.jpg`
 
-Remaining limitation:
+截图：`screenshots/模拟器/模拟器_最终_噪点_香港夜景01_结果.png`
 
-The color-cast metric still treats some natural color imbalance as a possible
-white-balance issue. Exact UI screenshots should be recaptured because the
-existing emulator screenshot predates this recalculation.
+设备：Android Emulator `Medium_Phone` / API 36.1
 
-## Counterexample 2: High-ISO Noise Scored As Good
+人工判断：夜景画面暗部较多，暗部和纹理区域能看到噪点，高 ISO 颗粒感明显；它应被视为有噪点风险的样本。
 
-Sample: `samples/noisy/noisy_nind_keyboard_03.jpg`
+App 结果：
 
-Manual judgment: high-ISO noise sample.
+- 清晰度：93
+- 曝光：10
+- 对比度：100
+- 偏色：76
+- 综合评分：67
+- 匹配状态：Partial
 
-Current emulator App UI result:
+为什么这是反例：
 
-- Sharpness: 96
-- Exposure: 71
-- Contrast: 89
-- Color cast: 98
-- Overall: 87
-- Match: No
+App 能通过曝光项和诊断文字提示夜景风险，但清晰度给到 93/100、对比度给到 100/100，明显偏高。原因是霓虹灯、招牌文字、建筑边缘和暗部噪声都会产生高频变化，容易被 Laplacian / Sobel / Tenengrad 类指标当成“边缘细节”。
 
-Failure reason:
+这个反例说明：当前 App 没有独立噪点分，噪点和真实细节在低层边缘指标中容易混在一起。于是噪点不会被充分扣分，反而可能抬高清晰度和对比度。
 
-The app does not have a dedicated noise metric. Texture and noise can raise
-both local Laplacian and Sobel/Tenengrad responses, causing a noisy image to
-look sharper to the algorithm. The current screenshot is
-`screenshots/emulator_noisy_nind_keyboard_result.png`; it is Android Emulator
-evidence, not Redmi K70E true-device evidence.
+可改进方向：
 
-Possible improvement:
+- 增加平坦暗部区域的噪声估计。
+- 在夜景或高 ISO 场景中降低随机高频纹理对清晰度的正向贡献。
+- 将“疑似噪点干扰”从诊断文本升级为可影响综合分的独立指标。
 
-Add a noise estimate on flat regions and combine it with sharpness so noise does
-not falsely improve perceived detail.
+## 其他局限样本
 
-## Counterexample 3: Artistic Night Bokeh Penalized
+以下样本不作为最终主反例，但仍用于说明 App 的评分边界：
 
-Sample: `samples/counterexamples/counterexample_bokeh_01.jpg`
+| 样本 | 人工判断 | App 综合分 | 状态 | 局限说明 |
+|---|---|---:|---|---|
+| `samples/blur/blur_subway_motion_01.jpg` | 运动模糊但有强边缘 | 90 | Mismatch | 高对比站台线条会抬高清晰度；该样本存在判断争议，因此不作为最终主反例。 |
+| `samples/noisy/noisy_nind_keyboard_03.jpg` | 高 ISO 键盘噪点 | 87 | Mismatch | 键盘硬边缘和噪点会抬高清晰度；适合作为噪点局限补充。 |
+| `samples/counterexamples/counterexample_bokeh_01.jpg` | 有意低光散景，人眼可接受 | 24 | Mismatch | 涉及艺术意图和审美判断，说明 App 不理解拍摄意图。 |
+| `samples/counterexamples/counterexample_colored_lights_02.jpg` | 彩色灯光夜景 | 49 | Partial | 特殊灯光和偏色会影响评分，需要人工解释。 |
+| `samples/underexposed/underexposed_space_02.jpg` | 暗绿低对比场景 | 41 | Partial | 综合分较低但曝光单项偏高，说明曝光指标不完全等同人眼暗感。 |
 
-Manual judgment: intentional night bokeh, human-acceptable.
+## Redmi K70E 真机补充
 
-Recalculated Sharpness-Calibrate scoring-log result:
+Redmi K70E 已完成部分代表样本真机截图，包括清晰、模糊、过曝、欠曝、噪点、PNG、WebP、反例和大图。与最终反例相关的真机结果包括：
 
-- Sharpness: 6
-- Exposure: 0
-- Contrast: 53
-- Color cast: 80
-- Overall: 25
-- Match: No
+- `samples/overexposed/overexposed_sky_02.jpg`：Redmi K70E 综合分 80/100，与模拟器一致，说明“过曝但总分偏高”的现象在真机上也复现。
+- `samples/noisy/noisy_hong_kong_night_01.jpg`：Redmi K70E 综合分 67/100，与模拟器一致，说明“噪点夜景清晰度偏高”的现象在真机上也复现。
 
-Failure reason:
+对应真机截图见：
 
-The algorithm sees blur and dark pixels but does not understand that the bokeh
-and low-light mood are intentional. The local-block upgrade does not solve
-scene intent or artistic blur.
+- `screenshots/红米K70E/红米K70E_最终_过曝_火车天空02_预览.jpg`
+- `screenshots/红米K70E/红米K70E_最终_过曝_火车天空02_结果.jpg`
+- `screenshots/红米K70E/红米K70E_最终_噪点_香港夜景01_预览.jpg`
+- `screenshots/红米K70E/红米K70E_最终_噪点_香港夜景01_结果.jpg`
 
-Possible improvement:
+## 总结
 
-Document this as a limitation, or add scene categories such as night/artistic
-mode before applying strict exposure and sharpness penalties.
+当前 App 能完成本地图片加载、预览、JPEG/PNG/WebP 分析、大图安全缩放和基础评分解释，但评分仍是规则式低层图像指标。最终选定的两个反例分别说明：
 
-## Real-Device Counterexample Evidence Pending
+- 局部过曝可能被其他高分项稀释，导致综合分偏高。
+- 夜景噪点可能被边缘/纹理指标误当成清晰细节，导致清晰度和对比度偏高。
 
-The counterexample scores above come from the structured WS6 score log at
-`logs/analysis_log.csv`. Some rows are emulator App UI results, while rows
-without screenshots remain offline scoring replays against the sample files.
-Real Redmi K70E App screenshots are still pending and should be added before
-final packaging if the device is available.
+这些反例不否定 App 的基础功能，而是明确展示评分算法的边界，满足比赛对“至少包含 1 个评分明显失准的反例并分析原因”的要求。

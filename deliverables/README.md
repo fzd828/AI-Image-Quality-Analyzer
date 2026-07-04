@@ -60,6 +60,10 @@ To be filled after the Android project is created.
 - `docs/ai-collaboration.md`
 - `docs/algorithm-notes.md`
 - `docs/counterexamples.md`
+- `../logs/final_validation_log.csv`
+- `../screenshots/README.md`
+- `../screenshots/模拟器/`
+- `../screenshots/红米K70E/`
 
 ## Final Submission Form
 
