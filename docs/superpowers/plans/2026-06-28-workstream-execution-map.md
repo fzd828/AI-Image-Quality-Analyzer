@@ -35,9 +35,9 @@ You do not need to create all conversations at once.
 Recommended batching:
 
 - Completed code batch: WS1, WS2, WS3, and WS4.
-- Completed evidence batch: WS5 sample set and WS6 emulator validation evidence.
-- Current batch: WS7 documentation finalization can proceed.
-- Final batch after WS7 completes: WS8 final ZIP package.
+- Completed evidence batch: WS5 sample set and WS6 final validation evidence through `1153675`.
+- Completed documentation batch: WS7 contest documentation finalization.
+- Next batch: WS8 final ZIP package.
 
 | ID | Name | Can Start When | Main Output |
 |---|---|---|---|
@@ -46,7 +46,7 @@ Recommended batching:
 | WS2 | Decode Metadata And Large Image Safety（图片解码、元数据与大图安全） | WS1 complete | `ImageLoader`, metadata, downsampled analysis bitmap |
 | WS3 | Quality Metrics Engine（画质指标计算引擎） | WS0 complete, can run in parallel with WS2 if interfaces are respected | raw image quality metrics and unit tests |
 | WS4 | Scoring And Result UI（评分规则与结果展示界面） | WS2 and WS3 complete | 0-100 scores, explanation, analysis time in UI |
-| WS5 | Redmi K70E Sample Set（红米 K70E 样本图片集） | WS0 complete | self-shot and derived samples |
+| WS5 | Redmi K70E Sample Set（红米 K70E 样本图片集） | WS0 complete | documented comparison samples and representative device evidence |
 | WS6 | Validation Evidence Run（验证证据运行与整理） | WS4 and WS5 complete | CSV log, screenshots, validation docs, counterexample |
 | WS7 | Contest Documentation Pack（比赛必交文档包） | WS0 complete, final pass after WS6 | README and required docs |
 | WS8 | ZIP Submission Package（最终 ZIP 提交包） | WS6 and WS7 complete | final structured ZIP, APK, self-review |
@@ -56,21 +56,21 @@ Recommended batching:
 - Only one package should edit `ImageAnalyzerScreen.kt` at a time.
 - WS3 may create analysis code and tests without touching UI.
 - WS5 may work only under `samples/`.
-- WS7 may work only under `deliverables/` until final integration.
+- WS7 may work under `deliverables/`, screenshot/documentation indexes, and OpenSpec task status, but must not change app code.
 - WS8 owns `apk/`, final ZIP structure, and final checklist.
 - If a package discovers a design change, update OpenSpec first instead of improvising.
 
 ## Current Workstream State
 
-- WS0: mostly complete; Task 1 reviewer approved. Real-device run still pending until Redmi K70E is connected.
+- WS0: mostly complete; Task 1 reviewer approved. Later WS6 evidence includes representative Redmi K70E true-device validation.
 - WS1: completed and committed as `cad805e feat: add image picker preview flow`.
 - WS2: completed and committed as `7e41851 feat: add safe image loading metadata`.
 - WS3: completed and committed as `a028db2 feat: add image quality metrics engine`; memory optimization committed as `f2ba977 perf: stream laplacian variance calculation`.
 - WS4: completed and committed as `d3b2d57 feat: add scoring result ui`; scroll/inset fix committed as `ad853b3 fix: add result screen scroll insets`.
-- WS5: completed and committed as `bbfa008 docs: prepare redmi k70e sample set`. Current samples are documented Wikimedia/open-license comparison samples; Redmi K70E self-shot samples remain optional follow-up evidence.
-- WS6: completed and committed through `935603f docs: add validation evidence run`, `726333b fix: support photo picker image decoding`, and `8e57d7c docs: add emulator validation evidence`. The current screenshot folder now keeps three current localized Android Emulator noisy-sample result screenshots, and `logs/analysis_log.csv` records all 21 samples. Older pre-calibration emulator screenshots were removed and should be recaptured only if needed for final packaging. Redmi K70E true-device screenshots and timing remain pending follow-up evidence.
-- WS7: should now finalize reviewer-facing documentation using the WS5/WS6 evidence and clearly preserve the emulator-vs-Redmi evidence boundary.
-- WS8: blocked until WS7 completes, then owns final APK copy, structured ZIP, and final checklist.
+- WS5: completed and committed as `bbfa008 docs: prepare redmi k70e sample set`. Current samples are documented Wikimedia/NIND/NASA external or public samples plus derived format samples; Redmi K70E is a representative validation device, not the source of all samples.
+- WS6: completed through `935603f docs: add validation evidence run`, `726333b fix: support photo picker image decoding`, `8e57d7c docs: add emulator validation evidence`, `70afe92 docs: update noisy emulator evidence`, and `1153675 docs: refresh final validation evidence`. `logs/final_validation_log.csv` is the final structured record with 32 rows: 22 Android Emulator records and 10 Redmi K70E representative true-device records. `logs/analysis_log.csv` is historical and should not be cited as final evidence.
+- WS7: completed by the final contest documentation pass. It updates `deliverables/`, `screenshots/README.md`, OpenSpec task status, and this workstream map without changing app code, samples, screenshots, or final logs.
+- WS8: not started. It begins after WS7 and owns final APK copy, structured ZIP, package naming, and final checklist.
 
 ## Conversation Count Recommendation
 
@@ -78,9 +78,9 @@ WS1-WS4 are complete and should not keep producing code.
 
 From the current state, create or continue conversations in this order:
 
-1. Now: continue or create WS7 for final documentation, staying out of app code unless a broken reference must be corrected.
-2. After WS7 is accepted: create WS8 for final APK and ZIP packaging.
-3. Optional before WS8 final self-review: add Redmi K70E true-device screenshots and timing if the phone validation is available.
+1. Next: create WS8 for final APK and ZIP packaging.
+2. During WS8: keep app business logic frozen unless final packaging reveals a blocking build issue.
+3. Optional before WS8 final self-review: run a full Redmi K70E all-sample sweep only if extra time is available. Current final evidence already includes representative Redmi K70E screenshots.
 
 If you want fewer conversations, merge these pairs:
 
@@ -94,7 +94,7 @@ That reduces the total to 6 conversations, but the 8-conversation version is cle
 Use prompts like:
 
 ```text
-请执行 WS7 比赛必交文档包。先读 AGENTS.md、docs/superpowers/task-packets/WS7-contest-documentation-pack.md、docs/superpowers/plans/2026-06-28-workstream-execution-map.md、deliverables/docs/、logs/analysis_log.csv、samples/SOURCES.md 和 screenshots/README.md。只做文档，不改 app 代码。必须明确区分 Android Emulator 证据、Redmi K70E 待补证据、Wikimedia 外部样本和自拍样本。
+请执行 WS7 比赛必交文档包。先读 AGENTS.md、docs/superpowers/task-packets/WS7-contest-documentation-pack.md、docs/superpowers/plans/2026-06-28-workstream-execution-map.md、deliverables/docs/、logs/final_validation_log.csv、samples/SOURCES.md 和 screenshots/README.md。只做文档，不改 app 代码。必须明确区分 Android Emulator 证据、Redmi K70E 代表真机证据、Wikimedia/NIND/NASA 外部样本、手机截图生成副本和自拍样本边界。
 ```
 
 ```text

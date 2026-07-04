@@ -2,7 +2,7 @@
 
 ## Sharpness / Blur
 
-Original method: global Laplacian variance on grayscale image.
+Final method: combine global Laplacian variance, focused local-block Laplacian variance, and Tenengrad edge energy on a downsampled grayscale analysis bitmap.
 
 Sharpness-Calibrate upgrade:
 
@@ -56,7 +56,7 @@ Known limitations:
 
 ## Exposure
 
-Candidate method: luminance histogram.
+Final method: luminance histogram and clipped-pixel ratios.
 
 Raw signals:
 
@@ -72,7 +72,7 @@ Known limitations:
 
 ## Contrast
 
-Candidate method: grayscale standard deviation or RMS contrast.
+Final method: grayscale contrast statistics, mainly standard deviation / RMS-style contrast.
 
 Known limitations:
 
@@ -81,7 +81,7 @@ Known limitations:
 
 ## Color Cast
 
-Candidate method: RGB channel imbalance after excluding extremely dark or bright pixels.
+Final method: RGB channel imbalance after excluding extremely dark or bright pixels.
 
 Known limitations:
 
@@ -90,7 +90,7 @@ Known limitations:
 
 ## Overall Score
 
-Initial score formula:
+Final score formula:
 
 ```text
 overall = 0.35 * sharpness
@@ -99,7 +99,7 @@ overall = 0.35 * sharpness
         + 0.15 * color_or_noise
 ```
 
-The formula should be adjusted only after validation evidence shows a clear reason.
+Validation shows this formula is explainable and stable for the required demo, but it can overrate images where one serious problem is diluted by other high sub-scores. The overexposed train-sky counterexample documents that limitation.
 
 ## Diagnosis Explanation Layer
 

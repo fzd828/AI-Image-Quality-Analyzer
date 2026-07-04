@@ -1,76 +1,64 @@
 # Scoring Alignment
 
-This document maps the final work to the contest judging rules.
+This document maps the final package to the contest judging signals.
 
 ## Passion - 25%
 
-Evidence to prepare:
+Evidence delivered:
 
-- More than the minimum three metrics if time allows.
-- Redmi K70E self-shot sample set across multiple failure modes.
-- Notes about image format differences.
-- Records of threshold tuning and performance checks.
+- Android native app with local image picker, preview, metadata, scoring, diagnosis, and analysis modes.
+- More than the minimum three dimensions: sharpness, exposure, contrast, and color cast / texture-noise risk.
+- Final validation log with 32 structured records: 22 emulator records and 10 Redmi K70E representative true-device records.
+- Format coverage for JPEG, PNG, and WebP, plus large-image downsampling evidence.
 
-Target message:
+Message to reviewer:
 
-I did not just finish a required app. I investigated how image quality scoring works, tested it, and understood where it breaks.
+The work goes beyond a minimal demo by connecting app behavior, sample evidence, device screenshots, algorithm notes, and known failure cases.
 
 ## Critical Thinking - 20%
 
-Evidence to prepare:
+Evidence delivered:
 
-- At least one AI suggestion that was wrong or incomplete.
-- At least one algorithmic counterexample.
-- A repeatable way to judge whether the score is reasonable.
+- `deliverables/docs/counterexamples.md` keeps two final counterexamples: overexposed train sky and noisy Hong Kong night scene.
+- `deliverables/docs/ai-collaboration.md` records AI suggestions that were rejected or corrected.
+- `deliverables/docs/algorithm-notes.md` explains why local-block sharpness improved the first global-Laplacian approach but still fails on noise and dense texture.
 
-Examples:
+Message to reviewer:
 
-- Local/global Laplacian and Tenengrad can still confuse noise or dense texture
-  with sharpness.
-- Global brightness can misjudge night scenes as underexposed.
-- Color-balance checks can misjudge sunset photos as color cast.
-
-Target message:
-
-I do not blindly accept AI or algorithm output. I test it, challenge it, and document limitations.
+The submission does not blindly trust AI or the score. It documents where the app is useful, where it is wrong, and why those failures happen.
 
 ## Questioning Ability - 20%
 
-Evidence to prepare:
+Evidence delivered:
 
-- A short question iteration log in `ai-collaboration.md`.
-- Show how the problem was decomposed:
-  - What metrics are feasible on mobile?
-  - How do we avoid OOM on large images?
-  - Which thresholds are stable?
-  - What counterexamples should be tested?
+- AI collaboration notes record the question path from broad assignment framing to concrete validation decisions.
+- OpenSpec artifacts split the project into requirements, design, tasks, and named work packages.
+- README and validation evidence answer the reviewer-facing questions: what was built, what was not built, why, and how it was verified.
 
-Target message:
+Message to reviewer:
 
-I can turn a broad task into structured questions and use AI to push beyond one-shot answers.
+The broad contest topic was decomposed into answerable engineering questions: mobile format support, safe decoding, explainable metrics, scoring limits, evidence, and reproducibility.
 
 ## Integration Ability - 20%
 
-Evidence to prepare:
+Evidence delivered:
 
-- App, algorithms, validation table, screenshots, and documents agree with each other.
-- The overall score formula connects sub-scores into one explainable result.
-- README links to validation and limitations.
+- `app/` source, `samples/`, `logs/final_validation_log.csv`, `screenshots/`, and `deliverables/docs/` refer to the same final evidence set.
+- README links the required documents and gives a traceable code-to-evidence path.
+- Validation documents explicitly separate Android Emulator evidence, Redmi K70E true-device evidence, external samples, and phone-generated JPEG copies.
 
-Target message:
+Message to reviewer:
 
-I can combine AI output, engineering constraints, test data, and my own judgment into a coherent deliverable.
+The final package integrates AI-assisted work, Android implementation, traditional CV metrics, screenshots, logs, and human judgment into one coherent deliverable.
 
 ## Learning Ability - 15%
 
-Evidence to prepare:
+Evidence delivered:
 
-- Notes on newly learned topics:
-  - Laplacian variance, local-block sharpness, and Tenengrad edge energy.
-  - Histogram-based exposure analysis.
-  - Android image decoding and downsampling.
-  - Format differences among JPEG, PNG, WebP.
+- Algorithm notes explain Laplacian variance, focused local-block sharpness, Tenengrad, exposure histogram logic, contrast, color cast, and HEIC compatibility boundaries.
+- Validation evidence shows threshold and diagnosis behavior after observing real samples.
+- Counterexamples show learning from failure rather than hiding weak cases.
 
-Target message:
+Message to reviewer:
 
-I can learn unfamiliar concepts quickly and turn them into a working demo.
+The project demonstrates fast learning of unfamiliar image-quality concepts and turns that learning into a runnable, documented Android submission.

@@ -1,6 +1,6 @@
 # 验证证据
 
-本文记录最终版 App 的验证证据。完整逐样本结构化记录见 `logs/final_validation_log.csv`，截图清单见 `screenshots/README.md`。
+本文记录最终版 App 的验证证据。完整逐样本结构化记录见 `logs/final_validation_log.csv`，截图清单见 `screenshots/README.md`。旧的 `logs/analysis_log.csv` 只保留为历史过程记录，不作为最终证据。
 
 ## 证据文件
 
@@ -14,7 +14,7 @@
 本轮证据明确区分运行设备和样本来源：
 
 - 模拟器证据：来自 Android Emulator `Medium_Phone`，Android API 36.1。
-- 真机证据：来自 Redmi K70E。
+- 真机证据：来自 Redmi K70E，属于代表样本真机验证，不等于所有样本都由 Redmi 全量跑完。
 - 样本来源：多数样本来自 Wikimedia Commons 或 NIND 等外部样本集；它们不是 Redmi K70E 自拍样本。
 - Redmi JPEG 格式截图：该条是手机截图/保存流程生成的 JPEG 副本，App 显示尺寸为 `1364 x 1024`，只用于证明 Redmi 端 JPEG 可选取、预览和分析；它不作为 repo 原始 `samples/formats/format_clear_jpeg_01.jpg` 的同图跨设备对比。
 
@@ -22,7 +22,7 @@
 
 ## 样本覆盖
 
-比赛要求“清晰 / 模糊 / 过曝 / 欠曝 / 噪点等各 2-3 张，并给出评分结果与人工判断的对比”。当前完整样本覆盖由模拟器完成，Redmi K70E 作为真机代表验证补充。
+比赛要求“清晰 / 模糊 / 过曝 / 欠曝 / 噪点等各 2-3 张，并给出评分结果与人工判断的对比”。当前完整样本覆盖由模拟器完成，Redmi K70E 作为真机代表验证补充；这能证明 App 在真机上可运行并复现关键样本，但不把 Redmi 截图包装成全量样本来源。
 
 | 类别 | 模拟器截图 | Redmi K70E 截图 | 说明 |
 |---|---:|---:|---|

@@ -7,7 +7,7 @@ These packages are the canonical execution units for future conversations.
 - [x] **WS0 - Project Baseline And Build Verification（项目基线与构建验证）**
   - Android Kotlin + Jetpack Compose project exists under `app/`.
   - Debug build has been verified with `:app:assembleDebug`.
-  - Real-device run remains pending until Redmi K70E is connected.
+  - Representative Redmi K70E true-device evidence was later recorded during WS6 validation.
 - [x] **WS1 - Picker Preview Flow（图片选择与预览流程）**
   - Depends on WS0.
   - Implements local image selection and preview only.
@@ -27,15 +27,16 @@ These packages are the canonical execution units for future conversations.
 - [x] **WS5 - Redmi K70E Sample Set（红米 K70E 样本图片集）**
   - Depends on WS0.
   - Can run in parallel with implementation.
-  - Prepares self-shot and derived validation images.
-  - Current status: comparison sample set prepared and committed as `bbfa008`; current samples are documented Wikimedia/open-license samples, with Redmi K70E self-shot samples still listed as follow-up evidence.
+  - Prepares documented comparison samples and device evidence.
+  - Current status: comparison sample set prepared and committed as `bbfa008`; current samples are documented Wikimedia/NIND/NASA external or public samples plus derived format samples. Redmi K70E evidence is representative true-device validation, not a claim that all samples are Redmi self-shot.
 - [x] **WS6 - Validation Evidence Run（验证证据运行与整理）**
   - Depends on WS4 and WS5.
   - Produces CSV logs, screenshots, validation table, and counterexample analysis.
-  - Current status: validation framework and emulator evidence committed as `935603f` and `8e57d7c`; Photo Picker decode fix committed as `726333b`. Redmi K70E true-device screenshots and timing remain pending follow-up evidence.
-- [ ] **WS7 - Contest Documentation Pack（比赛必交文档包）**
+  - Current status: completed through `1153675 docs: refresh final validation evidence`. Final structured evidence is `logs/final_validation_log.csv`, with Android Emulator full category coverage and Redmi K70E representative true-device screenshots.
+- [x] **WS7 - Contest Documentation Pack（比赛必交文档包）**
   - Depends on WS0 for drafts; final pass depends on WS6.
   - Completes README, algorithm notes, AI collaboration, constraints, and scoring alignment.
+  - Current status: completed by the contest documentation finalization pass; WS8 remains separate.
 - [ ] **WS8 - Final ZIP Submission Package（最终 ZIP 提交包）**
   - Depends on WS6 and WS7.
   - Builds final APK and structured ZIP. GitHub is optional only after ZIP completion.
@@ -74,20 +75,20 @@ Detailed package briefs live under `docs/superpowers/task-packets/`.
 - [x] Prepare sample categories: clear, blur, overexposed, underexposed, noisy.
 - [x] Collect 2-3 images per category.
 - [x] Run app against representative JPEG, PNG, and WebP samples on Android Emulator API 36.1.
-- [ ] Run app against all samples on Redmi K70E true device.
+- [ ] Run app against all samples on Redmi K70E true device. Current final evidence uses representative Redmi K70E validation, not an all-sample true-device sweep.
 - [x] Record sub-scores, overall score, and manual judgment.
 - [x] Add screenshots or logs.
 - [x] Add at least one counterexample and explain why it fails.
 
 ## Phase 4 - Contest Documents
 
-- [ ] Complete README: goals, non-goals, completion criteria, run instructions.
-- [ ] Complete 500-word constraints and decisions note.
-- [ ] Complete validation evidence document.
-- [ ] Complete AI collaboration document.
-- [ ] Complete algorithm notes.
-- [ ] Complete counterexample analysis.
-- [ ] Add HEIC compatibility discussion without making it a minimum supported format.
+- [x] Complete README: goals, non-goals, completion criteria, run instructions.
+- [x] Complete 500-word constraints and decisions note.
+- [x] Complete validation evidence document.
+- [x] Complete AI collaboration document.
+- [x] Complete algorithm notes.
+- [x] Complete counterexample analysis.
+- [x] Add HEIC compatibility discussion without making it a minimum supported format.
 
 ## Phase 5 - Final Package
 

@@ -53,5 +53,5 @@ with the final submission.
 - Three counterexamples are included for later WS6 analysis.
 - The NASA large-image sample is included specifically for the contest runtime
   note about acceptable analysis time and large-image handling.
-- All app scores remain pending until WS6 runs the Android app against these
-  samples.
+- Final app scores are recorded in `logs/final_validation_log.csv`; this file
+  only records sample provenance, preparation, and expected behavior.

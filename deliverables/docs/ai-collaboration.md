@@ -1,39 +1,58 @@
-# AI Collaboration
+# AI 协作说明
 
-## Collaboration Principle
+## 基本原则
 
-AI is used as a research and drafting assistant. Final decisions, validation, threshold selection, and correctness judgment are human responsibilities.
+AI 是研究、实现和整理助手，不是自动完成者。项目关键路径由人做选择、复核、纠错、取舍和验证；最终提交不声称接入云端大模型或深度学习识别模型。
 
-## Planned AI Usage
+## AI 参与的环节
 
-| Stage | AI Contribution | Human Verification |
+| 环节 | AI 作用 | 人的处理 |
 |---|---|---|
-| Topic analysis | Summarized contest requirements and judging rubric | Checked against the PDF |
-| Metric selection | Suggested sharpness, exposure, contrast, color cast, noise | Selected feasible mobile metrics |
-| Algorithm drafting | Drafted formulas and implementation ideas | Tested with sample images |
-| Documentation | Drafted README and evidence templates | Edited to match real results |
-| Counterexamples | Suggested likely failure cases | Reproduced at least one failure |
+| 需求拆解 | 根据作业要求拆出 README、约束决策、验证证据、AI 协作、可复现仓库等核心信号 | 对照原始作业图和比赛要求确认取舍 |
+| OpenSpec / 任务拆分 | 辅助生成 proposal、design、specs、tasks 和 WS0-WS8 工作包 | 决定按工作流逐包推进，避免扩大范围 |
+| 代码生成 | 辅助实现选图、预览、解码、指标、评分和 Compose 展示 | 人工运行、截图、复核分数和异常表现 |
+| 算法选择 | 提出 Laplacian、Tenengrad、曝光直方图、对比度、色偏等传统 CV 方法 | 选择移动端可解释方案，放弃深度学习和云 API |
+| 诊断文案 | 草拟“清晰度/曝光/对比/偏色/噪声风险”等解释语句 | 根据样本表现改写，避免夸大识别能力 |
+| 测试建议 | 建议格式、类别、大图、反例和真机验证清单 | 实际用模拟器和 Redmi K70E 运行并保留证据 |
+| 文档整理 | 辅助整理 README、验证表、反例、评分对齐和提交边界 | 人工核对最终日志、截图和设备/样本来源 |
 
-## Question Iteration Log
+## 人做的关键判断
 
-To be filled during the project.
+- 选择选题一，并把重点放在本地图片质量分析，而不是泛化图像识别。
+- 选择 Android 原生 Kotlin + Compose，保证移动端 APK 和真机运行证据。
+- 选择传统 CV 指标，明确不做深度学习、云 API、账号系统和完整相册管理。
+- 确认核心格式为 JPEG、PNG、WebP；HEIC 仅保留兼容性说明。
+- 确认样本来源：Wikimedia / NIND / NASA 外部样本用于对比，Redmi K70E 用于代表真机验证。
+- 亲自运行真机、保存截图、检查分数、判断反例是否适合最终提交。
+- 保留两个最终反例：过曝火车天空和香港夜景噪点，因为它们更直观、争议更小。
 
-Recommended structure:
+## 人工验证过的内容
 
-1. What does the contest actually reward?
-2. Which metrics can be implemented quickly and explained clearly?
-3. How can a large image be decoded without OOM?
-4. How should raw metrics be normalized into 0-100 scores?
-5. Which photos will break the scoring rules?
-6. How should the final package prove that the result is reproducible?
+- App 可在 Android Emulator 和 Redmi K70E 上运行。
+- JPEG、PNG、WebP 可选取、预览和分析。
+- 大图样本可降采样后完成分析。
+- `logs/final_validation_log.csv` 中的分数、设备、样本来源和截图路径与最终截图一致。
+- 两个最终反例的人工判断、App 分数和局限解释经过人工复核。
 
-## AI Mistakes Or Corrections
+## 问题迭代记录
 
-To be filled with real examples.
+1. 原始作业到底要求什么？先拆成目标/非目标、验证证据、AI 协作和可复现仓库。
+2. 哪些指标能在 Android 本地快速实现并解释？选择清晰度、曝光、对比度、偏色/噪点风险。
+3. 大图如何避免 OOM？采用预览图和分析图分离，并按分析模式降采样。
+4. 如何把原始指标变成 0-100？用可解释权重组合，并通过样本观察校准。
+5. 哪些样本会打破规则？重点寻找局部过曝、夜景噪点、运动模糊、艺术散景和特殊灯光。
+6. 如何降低评审成本？用最终 CSV、截图目录和文档索引把证据链固定下来。
 
-Candidate examples:
+## AI 建议的修正或拒绝
 
-- AI may suggest fixed Laplacian thresholds without considering resize policy.
-- AI may equate low brightness with poor exposure, which fails on night scenes.
-- AI may recommend deep learning models, but this may not fit the time and deployment constraints.
+| AI 输出或倾向 | 问题 | 人的修正 |
+|---|---|---|
+| 建议优先考虑深度学习或云端 AI 能力 | 部署、解释、复现和时间成本过高，也不符合当前交付边界 | 改为传统 CV 指标，并明确 AI 是辅助构建与验证 |
+| 只用全局 Laplacian 判断清晰度 | 平滑背景、浅景深、噪点和纹理都会干扰 | 增加局部块 focused Laplacian 和 Tenengrad 辅助，但仍记录局限 |
+| 把低亮度直接等同欠曝 | 夜景和氛围图可能本来就暗 | 在文档和诊断中区分曝光风险与主观拍摄意图 |
+| 把外部样本或 Redmi 截图说成自拍样本 | 会误导评审，也破坏证据边界 | 明确写成 Wikimedia / NIND / NASA 外部样本，Redmi 只代表运行设备 |
+| 想用更多功能增强包装，如 JSON 导出、复杂图表、相册管理 | 会分散时间，增加验证成本 | 保持比赛核心链路：选图、预览、分析、证据、反例、复现 |
 
+## 结论
+
+本项目不是“AI 全自动完成”。AI 提供了拆解、草拟和候选方案；人负责选择题目、确定边界、运行设备、收集截图、复核分数、识别反例和修正文档。最终可信度来自可复现证据，而不是 AI 的口头结论。
