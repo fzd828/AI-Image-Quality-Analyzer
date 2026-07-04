@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">画质分析器</string>
+    <string name="app_name">AI画质分析</string>
+    <string name="home_title">AI 图像质量分析工具</string>
+    <string name="home_subtitle">本地图片质量评估</string>
 </resources>

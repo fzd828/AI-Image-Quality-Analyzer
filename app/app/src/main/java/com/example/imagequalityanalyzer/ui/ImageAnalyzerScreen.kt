@@ -59,6 +59,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.compose.ui.res.stringResource
+import com.example.imagequalityanalyzer.R
 import com.example.imagequalityanalyzer.analysis.ImageQualityAnalyzer
 import com.example.imagequalityanalyzer.analysis.ImageQualityScorer
 import com.example.imagequalityanalyzer.analysis.QualityResult
@@ -137,13 +139,13 @@ fun ImageAnalyzerScreen() {
 private fun Header() {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
-            text = "画质分析工作台",
+            text = stringResource(R.string.home_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
         )
         Text(
-            text = "本地图片质量评估",
+            text = stringResource(R.string.home_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

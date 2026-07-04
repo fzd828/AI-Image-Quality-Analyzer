@@ -15,19 +15,27 @@ class ImageAnalyzerScreenPreviewTest {
 
     @Test
     fun appNameIsLocalizedForSystemPickerPrompts() {
+        assertEquals("AI画质分析", stringResource("app_name"))
+    }
+
+    @Test
+    fun homeHeaderTextMatchesApprovedBranding() {
+        assertEquals("AI 图像质量分析工具", stringResource("home_title"))
+        assertEquals("本地图片质量评估", stringResource("home_subtitle"))
+    }
+
+    private fun stringResource(name: String): String {
         val stringsFile = locateStringsFile()
         val document = DocumentBuilderFactory.newInstance()
             .newDocumentBuilder()
             .parse(stringsFile.toFile())
-        val appName = document.getElementsByTagName("string")
+        return document.getElementsByTagName("string")
             .let { nodes ->
                 (0 until nodes.length)
                     .map { nodes.item(it) }
-                    .first { it.attributes.getNamedItem("name").nodeValue == "app_name" }
+                    .first { it.attributes.getNamedItem("name").nodeValue == name }
                     .textContent
             }
-
-        assertEquals("画质分析器", appName)
     }
 
     private fun locateStringsFile(): Path {

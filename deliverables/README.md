@@ -8,6 +8,13 @@ Build a mobile tool that loads local images, previews them, analyzes image quali
 
 ISBG 2026 AI Homework Contest Option 1: AI image recognition and image quality analysis tool.
 
+Original Chinese topic:
+
+- 选题一：AI 图像识别与画质分析工具
+- 方向：图像处理与质量评估
+
+The in-app title uses `AI 图像质量分析工具` to align with this contest topic while keeping the implementation scope focused on explainable local image processing and quality evaluation.
+
 ## Supported Formats
 
 - JPEG
