@@ -1,4 +1,4 @@
-device,sample_path,category,format,source,manual_judgment,mode,original_size,analysis_size,downsampled,analysis_time_ms,sharpness,exposure,contrast,color_cast,overall_score,match_status,limitation_or_note,screenshot
+﻿device,sample_path,category,format,source,manual_judgment,mode,original_size,analysis_size,downsampled,analysis_time_ms,sharpness,exposure,contrast,color_cast,overall_score,match_status,limitation_or_note,screenshot
 emulator,samples/clear/clear_butterfly_01.jpg,clear,JPEG,Wikimedia external,人工判断：清晰花朵/蝴蝶样本，整体清晰但颜色偏暖,精细模式 2560,1920x1440,1920x1440,No,382,60,94,74,30,69,partial,App 给出可用但存在偏色风险，和人工判断基本一致,screenshots/模拟器/模拟器_最终_清晰_蝴蝶01_结果.png
 emulator,samples/clear/clear_beetle_spider_02.jpg,clear,JPEG,Wikimedia external,人工判断：主体纹理清晰，适合作为清晰样本,精细模式 2560,1920x1920,1920x1920,No,246,76,96,64,70,79,match,App 高分符合人工判断,screenshots/模拟器/模拟器_最终_清晰_甲虫蜘蛛02_结果.png
 emulator,samples/clear/clear_butterfly_03.jpg,clear,JPEG,Wikimedia external,人工判断：主体清晰，色彩偏暖但可接受,精细模式 2560,1920x1280,1920x1280,No,211,86,91,96,38,82,partial,App 高分但提示偏色风险，符合人工复核口径,screenshots/模拟器/模拟器_最终_清晰_蝴蝶03_结果.png
