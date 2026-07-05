@@ -58,7 +58,7 @@ screenshots/                 模拟器与 Redmi K70E 截图
 |---|---|
 | README：目标 / 非目标 / 完成判据 | `deliverables/README.md` |
 | 约束与决策说明 | `deliverables/docs/constraints-and-decisions.md` |
-| 验证证据：日志 / 截图 / 数据 / 对比 | `deliverables/docs/validation-evidence.md`, `logs/final_validation_log.csv`, `screenshots/README.md` |
+| 验证证据：日志 / 截图 / 数据 / 对比 | 日志：`logs/final_validation_log.csv`；截图：`screenshots/README.md` 和 `screenshots/`；数据：`deliverables/docs/validation-evidence.md`；对比：`deliverables/docs/validation-evidence.md` 和 `deliverables/docs/counterexamples.md` |
 | AI 协作说明 | `deliverables/docs/ai-collaboration.md` |
 | 可复现代码仓库说明 | `deliverables/docs/reproducibility.md` |
 
