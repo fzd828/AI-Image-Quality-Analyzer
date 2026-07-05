@@ -1,64 +1,64 @@
-# Scoring Alignment
+# 评审规则对齐
 
-This document maps the final package to the contest judging signals.
+本文把最终交付内容映射到比赛评审规则，方便面试官快速看到对应能力。
 
-## Passion - 25%
+## 热爱愿力 - 25%
 
-Evidence delivered:
+已交付证据：
 
-- Android native app with local image picker, preview, metadata, scoring, diagnosis, and analysis modes.
-- More than the minimum three dimensions: sharpness, exposure, contrast, and color cast / texture-noise risk.
-- Final validation log with 32 structured records: 22 emulator records and 10 Redmi K70E representative true-device records.
-- Format coverage for JPEG, PNG, and WebP, plus large-image downsampling evidence.
+- Android 原生 App 支持本地选图、预览、元数据、评分、诊断说明和分析模式。
+- 超过最低 3 个维度：清晰度、曝光、对比度、偏色/纹理噪声风险。
+- `logs/final_validation_log.csv` 记录 32 条最终结构化验证结果：22 条模拟器记录、10 条 Redmi K70E 代表真机记录。
+- 覆盖 JPEG、PNG、WebP 三种核心格式，并提供大图降采样证据。
 
-Message to reviewer:
+面试官能看到的信号：
 
-The work goes beyond a minimal demo by connecting app behavior, sample evidence, device screenshots, algorithm notes, and known failure cases.
+这不是只做一个最小 Demo，而是把 App 行为、样本证据、设备截图、算法说明和失败案例串成了一套可复核交付。
 
-## Critical Thinking - 20%
+## 批判思维 - 20%
 
-Evidence delivered:
+已交付证据：
 
-- `deliverables/docs/counterexamples.md` keeps two final counterexamples: overexposed train sky and noisy Hong Kong night scene.
-- `deliverables/docs/ai-collaboration.md` records AI suggestions that were rejected or corrected.
-- `deliverables/docs/algorithm-notes.md` explains why local-block sharpness improved the first global-Laplacian approach but still fails on noise and dense texture.
+- `deliverables/docs/counterexamples.md` 保留两个最终反例：过曝火车天空、香港夜景噪点。
+- `deliverables/docs/ai-collaboration.md` 记录了被拒绝或修正的 AI 建议。
+- `deliverables/docs/algorithm-notes.md` 说明为什么从单一全局 Laplacian 升级到局部块清晰度，同时也承认噪点和复杂纹理仍会误导算法。
 
-Message to reviewer:
+面试官能看到的信号：
 
-The submission does not blindly trust AI or the score. It documents where the app is useful, where it is wrong, and why those failures happen.
+我没有盲信 AI 或评分结果，而是主动找出算法哪里可用、哪里会错、为什么会错，并把错误保留下来作为证据。
 
-## Questioning Ability - 20%
+## 提问能力 - 20%
 
-Evidence delivered:
+已交付证据：
 
-- AI collaboration notes record the question path from broad assignment framing to concrete validation decisions.
-- OpenSpec artifacts split the project into requirements, design, tasks, and named work packages.
-- README and validation evidence answer the reviewer-facing questions: what was built, what was not built, why, and how it was verified.
+- `deliverables/docs/ai-collaboration.md` 记录了从“大作业要求”到“具体实现和验证决策”的问题迭代路径。
+- OpenSpec 文档把项目拆成需求、设计、任务和 WS0-WS8 工作包。
+- README 和验证证据回答了评审最关心的问题：做了什么、没做什么、为什么这样做、怎么证明可信。
 
-Message to reviewer:
+面试官能看到的信号：
 
-The broad contest topic was decomposed into answerable engineering questions: mobile format support, safe decoding, explainable metrics, scoring limits, evidence, and reproducibility.
+我能把宽泛题目拆成可回答的工程问题：格式支持、大图安全、可解释指标、评分局限、证据链和复现方式。
 
-## Integration Ability - 20%
+## 整合能力 - 20%
 
-Evidence delivered:
+已交付证据：
 
-- `app/` source, `samples/`, `logs/final_validation_log.csv`, `screenshots/`, and `deliverables/docs/` refer to the same final evidence set.
-- README links the required documents and gives a traceable code-to-evidence path.
-- Validation documents explicitly separate Android Emulator evidence, Redmi K70E true-device evidence, external samples, and phone-generated JPEG copies.
+- `app/` 源码、`samples/` 样本、`logs/final_validation_log.csv`、`screenshots/` 截图和 `deliverables/docs/` 文档引用同一套最终证据。
+- README 给出必交物索引和“代码 -> APK -> 样本 -> 日志 -> 截图 -> 文档结论”的追溯链路。
+- 验证文档明确区分 Android Emulator 证据、Redmi K70E 真机代表证据、外部样本和手机截图生成副本。
 
-Message to reviewer:
+面试官能看到的信号：
 
-The final package integrates AI-assisted work, Android implementation, traditional CV metrics, screenshots, logs, and human judgment into one coherent deliverable.
+我能把 AI 辅助产物、Android 实现、传统 CV 算法、截图日志和人工判断整合成一份一致的提交材料。
 
-## Learning Ability - 15%
+## 学习能力 - 15%
 
-Evidence delivered:
+已交付证据：
 
-- Algorithm notes explain Laplacian variance, focused local-block sharpness, Tenengrad, exposure histogram logic, contrast, color cast, and HEIC compatibility boundaries.
-- Validation evidence shows threshold and diagnosis behavior after observing real samples.
-- Counterexamples show learning from failure rather than hiding weak cases.
+- 算法说明解释了 Laplacian 方差、局部块清晰度、Tenengrad、曝光直方图、对比度、偏色和 HEIC 兼容性边界。
+- 验证证据展示了在真实样本观察后，阈值和诊断文案如何暴露优缺点。
+- 反例文档展示了从失败中学习，而不是隐藏弱点。
 
-Message to reviewer:
+面试官能看到的信号：
 
-The project demonstrates fast learning of unfamiliar image-quality concepts and turns that learning into a runnable, documented Android submission.
+我能快速学习陌生的图像质量评估概念，并在较短时间内把它们落成一个可运行、可解释、可验证的 Android Demo。

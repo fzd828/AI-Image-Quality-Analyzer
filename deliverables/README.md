@@ -1,4 +1,4 @@
-# Image Quality Analyzer
+# AI 图像质量分析工具
 
 ## 项目目标
 
@@ -70,7 +70,7 @@ screenshots/                 模拟器与 Redmi K70E 截图
 
 ## 证据边界
 
-- `logs/final_validation_log.csv` 是最终结构化记录；旧的 `logs/analysis_log.csv` 不作为最终证据。
+- `logs/final_validation_log.csv` 是唯一最终结构化验证记录。
 - `screenshots/模拟器/` 是 Android Emulator `Medium_Phone` / Android API 36.1 的最终截图。
 - `screenshots/红米K70E/` 是 Redmi K70E 真机代表验证截图。
 - Wikimedia / NIND / NASA 样本是外部或公共样本，不是 Redmi K70E 自拍样本。

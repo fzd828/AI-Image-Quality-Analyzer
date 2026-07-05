@@ -1,6 +1,6 @@
 # 验证证据
 
-本文记录最终版 App 的验证证据。完整逐样本结构化记录见 `logs/final_validation_log.csv`，截图清单见 `screenshots/README.md`。旧的 `logs/analysis_log.csv` 只保留为历史过程记录，不作为最终证据。
+本文记录最终版 App 的验证证据。完整逐样本结构化记录见 `logs/final_validation_log.csv`，截图清单见 `screenshots/README.md`。
 
 ## 证据文件
 
@@ -19,6 +19,16 @@
 - Redmi JPEG 格式截图：该条是手机截图/保存流程生成的 JPEG 副本，App 显示尺寸为 `1364 x 1024`，只用于证明 Redmi 端 JPEG 可选取、预览和分析；它不作为 repo 原始 `samples/formats/format_clear_jpeg_01.jpg` 的同图跨设备对比。
 
 除启动页外，最终验证统一使用 App 内 `精细模式 2560`。
+
+## 匹配状态说明
+
+表格里的 `Match`、`Partial`、`Mismatch` 表示“App 评分结果”和“人工判断”之间的一致程度：
+
+- `Match`：基本一致。人工判断和 App 总分、子分、诊断方向大体相符。
+- `Partial`：部分一致。App 抓到了一部分问题，或总分大致可用，但仍有需要人工解释的偏差。
+- `Mismatch`：明显不一致。人工认为存在清晰问题、噪点、曝光等风险，但 App 给出的分数或诊断方向明显偏乐观或偏悲观。
+
+例如：`clear_butterfly_01.jpg` 人工看是清晰但颜色偏暖，App 分数可用但提示偏色风险，所以标为 `Partial`；`clear_beetle_spider_02.jpg` 主体纹理清晰，App 也给出较高分，所以标为 `Match`。
 
 ## 样本覆盖
 

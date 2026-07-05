@@ -1,96 +1,82 @@
-# Algorithm Notes
+# 算法说明
 
-## Sharpness / Blur
+本文说明 App 当前使用的画质评分指标、参数含义和局限。所有指标都是本地传统计算机视觉规则，不是深度学习识别结果。
 
-Final method: combine global Laplacian variance, focused local-block Laplacian variance, and Tenengrad edge energy on a downsampled grayscale analysis bitmap.
+## 清晰度 / 模糊
 
-Sharpness-Calibrate upgrade:
+最终方法：在降采样后的灰度分析图上组合 3 个边缘信号：全局 Laplacian 方差、局部块 focused Laplacian 方差、Tenengrad 边缘能量。
 
-- Keep the original global Laplacian variance as an overall whole-image
-  sharpness signal.
-- Add `focusedLaplacianVariance`: split the analysis bitmap into an 8 x 8
-  grid, compute Laplacian variance per local block, then average the clearest
-  top 25% blocks. This gives more weight to likely subject/detail regions and
-  reduces the penalty from smooth background or shallow depth of field.
-- Add `tenengrad`: Sobel gradient energy. It is useful as extra edge evidence,
-  but noise and dense texture can raise it, so it is only a low-weight
-  auxiliary signal.
+清晰度校准升级：
 
-Raw signal:
+- 保留全局 Laplacian 方差，用作整张图的整体边缘/细节响应。
+- 增加 `focusedLaplacianVariance`：把分析图分成 `8 x 8` 网格，计算每个小块的 Laplacian 方差，再取最清晰的前 25% 小块求平均。这样能更关注主体或局部细节，减少平滑背景、浅景深背景对清晰度的拖累。
+- 增加 `tenengrad`：使用 Sobel 梯度能量作为辅助边缘证据。噪点和复杂纹理也会抬高它，所以只作为低权重辅助信号。
 
-- High global Laplacian: more whole-frame edge/detail response.
-- High focused Laplacian: at least some local regions contain clear detail.
-- High Tenengrad: strong Sobel edge energy.
-- Low values across all three signals: likely blur or low-detail content.
+原始信号含义：
 
-Parameters to document:
+- 全局 Laplacian 高：整张图有更多边缘和细节响应。
+- 局部 focused Laplacian 高：至少部分区域存在较清楚的细节。
+- Tenengrad 高：Sobel 边缘能量较强。
+- 三者都低：更可能是失焦、运动模糊或低细节画面。
 
-- Analysis bitmap size.
-- Laplacian kernel.
-- Focus grid: 8 x 8 blocks.
-- Focused block selection: top 25% block variances.
-- Sharpness score weights: focused Laplacian 60%, global Laplacian 25%,
-  Tenengrad 15%.
-- Normalization half-score values: focused Laplacian 150, global Laplacian 400,
-  Tenengrad 4000.
+参数：
 
-Upgrade reason:
+- 分析图尺寸：由 App 内分析模式决定，本轮最终验证统一使用 `精细模式 2560`。
+- Laplacian 核：用于检测二阶边缘变化。
+- 局部网格：`8 x 8`。
+- 局部块选择：取方差最高的前 25% 小块。
+- 清晰度权重：focused Laplacian 60%，全局 Laplacian 25%，Tenengrad 15%。
+- 归一化半分值：focused Laplacian 150，全局 Laplacian 400，Tenengrad 4000。
 
-The first implementation used only global Laplacian variance. It was simple,
-fast, and explainable, but validation showed two problems: natural photos and
-shallow-depth-of-field images could be dragged down by smooth background areas,
-while noise, dense texture, or high-frequency background detail could raise the
-edge response. The upgraded score uses local-block Laplacian to focus on the
-clearest regions, keeps global Laplacian for whole-frame stability, and adds
-Tenengrad only as supporting edge-energy evidence.
+升级原因：
 
-Known limitations:
+第一版只使用全局 Laplacian 方差，简单、快速、可解释，但验证时发现两类问题：自然照片或浅景深照片会被大面积平滑背景拉低；噪点、复杂纹理和高频背景细节又可能把边缘响应抬高。升级后用局部块 Laplacian 关注最清楚区域，同时保留全局稳定性，Tenengrad 只做辅助。
 
-- Noise and compression artifacts can look like sharp details.
-- Complex texture and high-ISO noise can still increase both local Laplacian
-  and Tenengrad.
-- Smooth scenes may have low edge response even when focused.
-- Artistic blur, motion blur, and shallow depth of field still need human
-  interpretation because the app has no subject or scene-intent model.
-- Thresholds change if the analysis size changes.
+局限：
 
-## Exposure
+- 噪点和压缩伪影可能被误认为清晰细节。
+- 复杂纹理、高 ISO 噪点仍会抬高 Laplacian 和 Tenengrad。
+- 平滑但实际对焦正确的场景可能得分偏低。
+- 艺术模糊、运动模糊、浅景深需要人工解释，因为 App 没有主体识别或拍摄意图理解。
+- 如果分析图尺寸变化，阈值和分数也会变化。
 
-Final method: luminance histogram and clipped-pixel ratios.
+## 曝光
 
-Raw signals:
+最终方法：使用亮度直方图和明暗裁剪比例。
 
-- Mean luminance.
-- Underexposed pixel ratio.
-- Overexposed pixel ratio.
+原始信号：
 
-Known limitations:
+- 平均亮度。
+- 欠曝像素比例。
+- 过曝像素比例。
 
-- Night scenes may be intentionally dark.
-- Snow, sky, or high-key images may be intentionally bright.
-- Global histogram ignores local subject exposure.
+局限：
 
-## Contrast
+- 夜景可能是有意偏暗。
+- 雪景、天空、高调照片可能是有意偏亮。
+- 全局直方图无法判断主体局部曝光是否正确。
 
-Final method: grayscale contrast statistics, mainly standard deviation / RMS-style contrast.
+## 对比度
 
-Known limitations:
+最终方法：使用灰度对比统计，主要是标准差 / RMS 风格的对比度。
 
-- Low contrast may be artistic style.
-- High contrast may hide detail in shadows or highlights.
+局限：
 
-## Color Cast
+- 低对比可能是艺术风格。
+- 高对比不一定更好，也可能隐藏暗部或高光细节。
 
-Final method: RGB channel imbalance after excluding extremely dark or bright pixels.
+## 偏色 / 色彩平衡
 
-Known limitations:
+最终方法：排除极暗和极亮像素后，估计 RGB 通道不平衡程度。
 
-- Warm light, sunset, neon, and filters may be intentional.
-- Without scene semantics, the method can only estimate.
+局限：
 
-## Overall Score
+- 暖光、日落、霓虹、滤镜可能是有意色彩。
+- 没有场景语义时，只能估计色彩偏移风险，不能等同于专业白平衡判断。
 
-Final score formula:
+## 综合分
+
+最终公式：
 
 ```text
 overall = 0.35 * sharpness
@@ -99,35 +85,30 @@ overall = 0.35 * sharpness
         + 0.15 * color_or_noise
 ```
 
-Validation shows this formula is explainable and stable for the required demo, but it can overrate images where one serious problem is diluted by other high sub-scores. The overexposed train-sky counterexample documents that limitation.
+这个公式简单、可解释，适合本次作业 Demo。但它也有局限：某一项严重问题可能被其他高分项稀释。`overexposed_sky_02.jpg` 就是最终反例：曝光有明显问题，但清晰度、对比度、偏色得分较高，导致综合分仍偏高。
 
-## Diagnosis Explanation Layer
+## 诊断说明层
 
-Diagnosis Explanation V2 changes only the result text layer. It can now list up
-to three weak dimensions in severity order, distinguish underexposure from
-overexposure, and add a conservative texture/noise risk sentence when very high
-edge response appears together with dark or low-exposure conditions.
+诊断说明 V2 只改变结果文案，不改变核心算法。它会按严重程度列出最多三个弱项，区分欠曝和过曝，并在“暗场景 + 很高边缘响应”时增加保守的噪声/纹理风险提示。
 
-当前诊断层增加了保守的噪声/纹理风险提示，但没有新增独立噪声检测指标，因此 noisy 样本仍属于算法局限展示。
+注意：当前 App 只有噪声/纹理风险提示，没有独立噪声检测指标。因此 noisy 样本仍属于算法局限展示，不能声称已经具备专业噪声检测能力。
 
-## Performance And Large Images
+## 性能与大图
 
-The app records analysis time for each image.
+App 会记录每张图片的分析耗时，并记录：
 
-The app also records:
+- 原始图片尺寸。
+- 分析图尺寸。
+- 是否发生降采样。
 
-- Original image dimensions.
-- Analysis bitmap dimensions.
-- Whether downsampling was used.
+这些信息用于证明单图分析耗时可接受，并证明大图不会直接按原始 12MP+ 尺寸硬解分析，从而降低 OOM 风险。
 
-This evidence is used to support the contest requirement that analysis time should be acceptable and large images should not cause OOM crashes.
+## HEIC 兼容性
 
-## HEIC Compatibility
+HEIC 只作为兼容性说明，不作为最低交付格式。
 
-HEIC is discussed as an extension rather than a minimum supported format.
+原因：
 
-Reason:
-
-- Android HEIC support depends on OS version, device codec availability, and decoder API behavior.
-- The contest requires at least three common formats, so JPEG, PNG, and WebP are the core commitment.
-- HEIC can be tested as a stretch goal if the device and Android API support it reliably.
+- Android 对 HEIC 的支持依赖系统版本、设备编解码器和解码 API 行为。
+- 作业要求至少 3 种常见格式，本项目核心承诺是 JPEG、PNG、WebP。
+- 如果设备和 API 稳定支持，HEIC 可以作为后续加分验证，但不写入本轮完成判据。
