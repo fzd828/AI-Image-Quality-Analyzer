@@ -1,4 +1,4 @@
-# Project: Image Quality Analyzer
+﻿# Project: Image Quality Analyzer
 
 ## Purpose
 
@@ -47,10 +47,10 @@ The final submission should optimize for the judging rubric:
 The final package must contain:
 
 - `README.md`: goal, non-goals, completion criteria, run instructions.
-- `docs/constraints-and-decisions.md`: 500-word decision summary.
-- `docs/validation-evidence.md`: screenshots, logs, sample table, comparison against manual judgment.
-- `docs/ai-collaboration.md`: what AI generated, what the human modified, rewrote, or verified.
-- `docs/algorithm-notes.md`: metrics, formulas, parameters, limitations.
-- `docs/counterexamples.md`: at least one obvious scoring failure and root-cause analysis.
+- `docs/武汉-AI画质分析-袁嘉乐-约束与决策说明.md`: 500-word decision summary.
+- `docs/武汉-AI画质分析-袁嘉乐-验证证据.md`: screenshots, logs, sample table, comparison against manual judgment.
+- `docs/武汉-AI画质分析-袁嘉乐-AI协作说明.md`: what AI generated, what the human modified, rewrote, or verified.
+- `docs/武汉-AI画质分析-袁嘉乐-算法说明.md`: metrics, formulas, parameters, limitations.
+- `docs/武汉-AI画质分析-袁嘉乐-反例分析.md`: at least one obvious scoring failure and root-cause analysis.
 - Reproducible Android source code or a clearly runnable package.
 

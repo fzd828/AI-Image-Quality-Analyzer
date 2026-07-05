@@ -1,4 +1,4 @@
-# Tasks: Option 1 Image Quality Analyzer
+﻿# Tasks: Option 1 Image Quality Analyzer
 
 ## Named Work Packages
 
@@ -32,7 +32,7 @@ These packages are the canonical execution units for future conversations.
 - [x] **WS6 - Validation Evidence Run（验证证据运行与整理）**
   - Depends on WS4 and WS5.
   - Produces CSV logs, screenshots, validation table, and counterexample analysis.
-  - Current status: completed through `1153675 docs: refresh final validation evidence`. Final structured evidence is `logs/final_validation_log.csv`, with Android Emulator full category coverage and Redmi K70E representative true-device screenshots.
+  - Current status: completed through `1153675 docs: refresh final validation evidence`. Final structured evidence is `logs/武汉-AI画质分析-袁嘉乐-最终验证日志.csv`, with Android Emulator full category coverage and Redmi K70E representative true-device screenshots.
 - [x] **WS7 - Contest Documentation Pack（比赛必交文档包）**
   - Depends on WS0 for drafts; final pass depends on WS6.
   - Completes README, algorithm notes, AI collaboration, constraints, and scoring alignment.
