@@ -4,7 +4,7 @@
 
 项目使用 Android 原生 Kotlin + Jetpack Compose 实现。App 支持从本地选择图片、预览图片和基础元数据，并通过安全降采样避免大图 OOM；分析结果包含清晰度、曝光、对比度、偏色/噪点风险等可解释指标，以及 0-100 综合质量分和诊断说明。
 
-English summary: Android local image quality analyzer with reproducible validation evidence for ISBG 2026 AI Homework Option 1.
+一句话概括：这是一个本地运行、可复现、带完整验证证据的 Android 图像质量分析工具。
 
 ## 推荐阅读顺序
 
