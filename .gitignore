@@ -5,6 +5,7 @@ build/
 .env
 .env.*
 *.log
+/*.pdf
 
 tmp/
 .agents/
